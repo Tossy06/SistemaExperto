@@ -1,0 +1,561 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1293" viewBox="0 0 1200 1293">
+<defs>
+  <marker id="flecha" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 Z" fill="#1B2631"/></marker>
+  <marker id="abierta" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10" fill="none" stroke="#1B2631" stroke-width="1.3"/></marker>
+  <marker id="herencia" viewBox="0 0 14 14" refX="14" refY="7" markerWidth="14" markerHeight="14" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+    <path d="M0,0 L14,7 L0,14 Z" fill="#fff" stroke="#1B2631" stroke-width="1.2"/></marker>
+  <marker id="rombo" viewBox="0 0 20 10" refX="20" refY="5" markerWidth="20" markerHeight="10" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+    <path d="M0,5 L10,0 L20,5 L10,10 Z" fill="#1B2631"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#fff"/>
+<rect x="20" y="40" width="300" height="164" rx="0" fill="#fff" stroke="#5F6B73" stroke-width="1.4"/>
+<rect x="20" y="40" width="300" height="61" rx="0" fill="#F1F3F4" stroke="#5F6B73" stroke-width="1.4"/>
+<text x="170.0" y="60" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" font-style="italic" text-anchor="middle" fill="#5F6B73">«controlador»</text>
+<text x="170.0" y="76" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" text-anchor="middle" fill="#1B2631">Controladores Flask</text>
+<text x="170.0" y="91" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="normal" font-style="italic" text-anchor="middle" fill="#5F6B73">app/controlador</text>
+<text x="28.0" y="118" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">publico.bp: inicio, ingresar, registro, salir</text>
+<text x="28.0" y="135" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">aspirante.bp: cuestionario, evaluar,</text>
+<text x="41.8" y="152" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">evaluacion, inicio</text>
+<text x="28.0" y="169" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">ingeniero.bp: panel, granulos, granulo_*,</text>
+<text x="41.8" y="186" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">reglas, evaluaciones</text>
+<rect x="400" y="20" width="400" height="327" rx="0" fill="#fff" stroke="#1F4E79" stroke-width="1.4"/>
+<rect x="400" y="20" width="400" height="61" rx="0" fill="#DCE8F5" stroke="#1F4E79" stroke-width="1.4"/>
+<text x="600.0" y="40" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" font-style="italic" text-anchor="middle" fill="#1F4E79">«fachada del modelo»</text>
+<text x="600.0" y="56" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" text-anchor="middle" fill="#1B2631">SistemaExperto</text>
+<text x="600.0" y="71" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="normal" font-style="italic" text-anchor="middle" fill="#5F6B73">app/modelo/sistema_experto.py</text>
+<text x="408.0" y="98" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+aspirantes: AspiranteDAO</text>
+<text x="408.0" y="115" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+ingenieros: IngenieroDAO</text>
+<text x="408.0" y="132" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+preguntas: PreguntaDAO</text>
+<text x="408.0" y="149" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+hechos: HechoDAO   +hipotesis: HipotesisDAO</text>
+<text x="408.0" y="166" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+granulos: GranuloDAO</text>
+<text x="408.0" y="183" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+reglas: ReglaNoConcluyenteDAO</text>
+<text x="408.0" y="200" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+evaluaciones: EvaluacionDAO</text>
+<text x="408.0" y="217" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+motor: MotorInferencia</text>
+<polyline points="400,225 800,225" fill="none" stroke="#1F4E79" stroke-width="1"/>
+<text x="408.0" y="240" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+registrar_aspirante(datos, contrasena): Aspirante</text>
+<text x="408.0" y="257" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+autenticar(rol, correo, contrasena)</text>
+<text x="408.0" y="274" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+evaluar(id_aspirante, textos): int</text>
+<text x="408.0" y="291" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+crear_granulo(id_ing, id_hecho, id_hip, peso): str</text>
+<text x="408.0" y="308" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+actualizar_granulo(id_ing, id_granulo, peso, activo)</text>
+<text x="408.0" y="325" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+resumen(): dict</text>
+<rect x="880" y="20" width="300" height="174" rx="0" fill="#fff" stroke="#9A6B00" stroke-width="1.4"/>
+<rect x="880" y="20" width="300" height="61" rx="0" fill="#FFF4D6" stroke="#9A6B00" stroke-width="1.4"/>
+<text x="1030.0" y="40" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" font-style="italic" text-anchor="middle" fill="#9A6B00">«servicio»</text>
+<text x="1030.0" y="56" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" text-anchor="middle" fill="#1B2631">MotorInferencia</text>
+<text x="1030.0" y="71" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="normal" font-style="italic" text-anchor="middle" fill="#5F6B73">motor_inferencia.py</text>
+<text x="888.0" y="98" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">-_hechos: HechoDAO</text>
+<text x="888.0" y="115" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">-_granulos: GranuloDAO</text>
+<text x="888.0" y="132" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">-_reglas: ReglaNoConcluyenteDAO</text>
+<polyline points="880,140 1180,140" fill="none" stroke="#9A6B00" stroke-width="1"/>
+<text x="888.0" y="155" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">-_derivar(respuesta): Hecho</text>
+<text x="888.0" y="172" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+inferir(respuestas): ResultadoInferencia</text>
+<rect x="880" y="230" width="300" height="109" rx="0" fill="#fff" stroke="#9A6B00" stroke-width="1.4"/>
+<rect x="880" y="230" width="300" height="30" rx="0" fill="#FFF4D6" stroke="#9A6B00" stroke-width="1.4"/>
+<text x="1030.0" y="250" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" text-anchor="middle" fill="#1B2631">TablaContabilizacion</text>
+<text x="888.0" y="277" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">-_conteos: dict</text>
+<polyline points="880,285 1180,285" fill="none" stroke="#9A6B00" stroke-width="1"/>
+<text x="888.0" y="300" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+registrar(granulo, hecho)</text>
+<text x="888.0" y="317" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+calcular_probabilidades(): list</text>
+<line x1="320.0" y1="122.0" x2="326.0" y2="122.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="330.0" y1="122.0" x2="336.0" y2="122.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="340.0" y1="122.0" x2="346.0" y2="122.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="350.0" y1="122.0" x2="356.0" y2="122.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="360.0" y1="122.0" x2="366.0" y2="122.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="370.0" y1="122.0" x2="376.0" y2="122.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="380.0" y1="122.0" x2="386.0" y2="122.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="390.0" y1="122.0" x2="396.0" y2="122.0" stroke="#1B2631" stroke-width="1.2"/>
+<polyline points="389.0,128.0 400.0,122.0 389.0,116.0" fill="none" stroke="#1B2631" stroke-width="1.3"/>
+<text x="360.0" y="116.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" font-style="italic" text-anchor="middle" fill="#1B2631">usa</text>
+<polyline points="800,80 880,80" fill="none" stroke="#1B2631" stroke-width="1.2"/>
+<polygon points="800.0,80.0 810.0,74.0 820.0,80.0 810.0,86.0" fill="#1B2631"/>
+<text x="840.0" y="74" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631">1</text>
+<line x1="1030.0" y1="194.0" x2="1030.0" y2="200.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="1030.0" y1="204.0" x2="1030.0" y2="210.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="1030.0" y1="214.0" x2="1030.0" y2="220.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="1030.0" y1="224.0" x2="1030.0" y2="230.0" stroke="#1B2631" stroke-width="1.2"/>
+<polyline points="1024.0,219.0 1030.0,230.0 1036.0,219.0" fill="none" stroke="#1B2631" stroke-width="1.3"/>
+<text x="1038.0" y="216.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" font-style="italic" text-anchor="start" fill="#1B2631">crea</text>
+<rect x="15" y="400" width="1170" height="590" rx="4" fill="#FAFBFC" stroke="none"/>
+<line x1="15.0" y1="400.0" x2="23.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="27.0" y1="400.0" x2="35.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="39.0" y1="400.0" x2="47.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="51.0" y1="400.0" x2="59.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="63.0" y1="400.0" x2="71.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="75.0" y1="400.0" x2="83.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="87.0" y1="400.0" x2="95.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="99.0" y1="400.0" x2="107.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="111.0" y1="400.0" x2="119.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="123.0" y1="400.0" x2="131.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="135.0" y1="400.0" x2="143.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="147.0" y1="400.0" x2="155.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="159.0" y1="400.0" x2="167.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="171.0" y1="400.0" x2="179.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="183.0" y1="400.0" x2="191.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="195.0" y1="400.0" x2="203.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="207.0" y1="400.0" x2="215.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="219.0" y1="400.0" x2="227.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="231.0" y1="400.0" x2="239.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="243.0" y1="400.0" x2="251.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="255.0" y1="400.0" x2="263.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="267.0" y1="400.0" x2="275.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="279.0" y1="400.0" x2="287.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="291.0" y1="400.0" x2="299.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="303.0" y1="400.0" x2="311.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="315.0" y1="400.0" x2="323.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="327.0" y1="400.0" x2="335.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="339.0" y1="400.0" x2="347.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="351.0" y1="400.0" x2="359.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="363.0" y1="400.0" x2="371.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="375.0" y1="400.0" x2="383.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="387.0" y1="400.0" x2="395.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="399.0" y1="400.0" x2="407.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="411.0" y1="400.0" x2="419.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="423.0" y1="400.0" x2="431.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="435.0" y1="400.0" x2="443.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="447.0" y1="400.0" x2="455.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="459.0" y1="400.0" x2="467.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="471.0" y1="400.0" x2="479.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="483.0" y1="400.0" x2="491.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="495.0" y1="400.0" x2="503.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="507.0" y1="400.0" x2="515.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="519.0" y1="400.0" x2="527.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="531.0" y1="400.0" x2="539.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="543.0" y1="400.0" x2="551.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="555.0" y1="400.0" x2="563.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="567.0" y1="400.0" x2="575.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="579.0" y1="400.0" x2="587.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="591.0" y1="400.0" x2="599.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="603.0" y1="400.0" x2="611.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="615.0" y1="400.0" x2="623.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="627.0" y1="400.0" x2="635.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="639.0" y1="400.0" x2="647.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="651.0" y1="400.0" x2="659.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="663.0" y1="400.0" x2="671.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="675.0" y1="400.0" x2="683.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="687.0" y1="400.0" x2="695.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="699.0" y1="400.0" x2="707.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="711.0" y1="400.0" x2="719.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="723.0" y1="400.0" x2="731.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="735.0" y1="400.0" x2="743.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="747.0" y1="400.0" x2="755.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="759.0" y1="400.0" x2="767.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="771.0" y1="400.0" x2="779.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="783.0" y1="400.0" x2="791.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="795.0" y1="400.0" x2="803.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="807.0" y1="400.0" x2="815.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="819.0" y1="400.0" x2="827.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="831.0" y1="400.0" x2="839.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="843.0" y1="400.0" x2="851.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="855.0" y1="400.0" x2="863.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="867.0" y1="400.0" x2="875.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="879.0" y1="400.0" x2="887.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="891.0" y1="400.0" x2="899.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="903.0" y1="400.0" x2="911.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="915.0" y1="400.0" x2="923.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="927.0" y1="400.0" x2="935.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="939.0" y1="400.0" x2="947.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="951.0" y1="400.0" x2="959.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="963.0" y1="400.0" x2="971.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="975.0" y1="400.0" x2="983.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="987.0" y1="400.0" x2="995.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="999.0" y1="400.0" x2="1007.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1011.0" y1="400.0" x2="1019.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1023.0" y1="400.0" x2="1031.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1035.0" y1="400.0" x2="1043.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1047.0" y1="400.0" x2="1055.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1059.0" y1="400.0" x2="1067.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1071.0" y1="400.0" x2="1079.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1083.0" y1="400.0" x2="1091.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1095.0" y1="400.0" x2="1103.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1107.0" y1="400.0" x2="1115.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1119.0" y1="400.0" x2="1127.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1131.0" y1="400.0" x2="1139.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1143.0" y1="400.0" x2="1151.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1155.0" y1="400.0" x2="1163.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1167.0" y1="400.0" x2="1175.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1179.0" y1="400.0" x2="1185.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="400.0" x2="1185.0" y2="408.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="412.0" x2="1185.0" y2="420.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="424.0" x2="1185.0" y2="432.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="436.0" x2="1185.0" y2="444.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="448.0" x2="1185.0" y2="456.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="460.0" x2="1185.0" y2="468.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="472.0" x2="1185.0" y2="480.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="484.0" x2="1185.0" y2="492.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="496.0" x2="1185.0" y2="504.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="508.0" x2="1185.0" y2="516.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="520.0" x2="1185.0" y2="528.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="532.0" x2="1185.0" y2="540.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="544.0" x2="1185.0" y2="552.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="556.0" x2="1185.0" y2="564.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="568.0" x2="1185.0" y2="576.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="580.0" x2="1185.0" y2="588.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="592.0" x2="1185.0" y2="600.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="604.0" x2="1185.0" y2="612.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="616.0" x2="1185.0" y2="624.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="628.0" x2="1185.0" y2="636.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="640.0" x2="1185.0" y2="648.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="652.0" x2="1185.0" y2="660.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="664.0" x2="1185.0" y2="672.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="676.0" x2="1185.0" y2="684.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="688.0" x2="1185.0" y2="696.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="700.0" x2="1185.0" y2="708.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="712.0" x2="1185.0" y2="720.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="724.0" x2="1185.0" y2="732.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="736.0" x2="1185.0" y2="744.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="748.0" x2="1185.0" y2="756.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="760.0" x2="1185.0" y2="768.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="772.0" x2="1185.0" y2="780.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="784.0" x2="1185.0" y2="792.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="796.0" x2="1185.0" y2="804.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="808.0" x2="1185.0" y2="816.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="820.0" x2="1185.0" y2="828.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="832.0" x2="1185.0" y2="840.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="844.0" x2="1185.0" y2="852.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="856.0" x2="1185.0" y2="864.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="868.0" x2="1185.0" y2="876.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="880.0" x2="1185.0" y2="888.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="892.0" x2="1185.0" y2="900.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="904.0" x2="1185.0" y2="912.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="916.0" x2="1185.0" y2="924.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="928.0" x2="1185.0" y2="936.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="940.0" x2="1185.0" y2="948.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="952.0" x2="1185.0" y2="960.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="964.0" x2="1185.0" y2="972.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="976.0" x2="1185.0" y2="984.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="988.0" x2="1185.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1185.0" y1="990.0" x2="1177.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1173.0" y1="990.0" x2="1165.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1161.0" y1="990.0" x2="1153.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1149.0" y1="990.0" x2="1141.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1137.0" y1="990.0" x2="1129.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1125.0" y1="990.0" x2="1117.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1113.0" y1="990.0" x2="1105.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1101.0" y1="990.0" x2="1093.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1089.0" y1="990.0" x2="1081.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1077.0" y1="990.0" x2="1069.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1065.0" y1="990.0" x2="1057.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1053.0" y1="990.0" x2="1045.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1041.0" y1="990.0" x2="1033.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1029.0" y1="990.0" x2="1021.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1017.0" y1="990.0" x2="1009.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="1005.0" y1="990.0" x2="997.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="993.0" y1="990.0" x2="985.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="981.0" y1="990.0" x2="973.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="969.0" y1="990.0" x2="961.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="957.0" y1="990.0" x2="949.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="945.0" y1="990.0" x2="937.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="933.0" y1="990.0" x2="925.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="921.0" y1="990.0" x2="913.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="909.0" y1="990.0" x2="901.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="897.0" y1="990.0" x2="889.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="885.0" y1="990.0" x2="877.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="873.0" y1="990.0" x2="865.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="861.0" y1="990.0" x2="853.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="849.0" y1="990.0" x2="841.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="837.0" y1="990.0" x2="829.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="825.0" y1="990.0" x2="817.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="813.0" y1="990.0" x2="805.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="801.0" y1="990.0" x2="793.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="789.0" y1="990.0" x2="781.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="777.0" y1="990.0" x2="769.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="765.0" y1="990.0" x2="757.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="753.0" y1="990.0" x2="745.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="741.0" y1="990.0" x2="733.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="729.0" y1="990.0" x2="721.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="717.0" y1="990.0" x2="709.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="705.0" y1="990.0" x2="697.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="693.0" y1="990.0" x2="685.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="681.0" y1="990.0" x2="673.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="669.0" y1="990.0" x2="661.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="657.0" y1="990.0" x2="649.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="645.0" y1="990.0" x2="637.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="633.0" y1="990.0" x2="625.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="621.0" y1="990.0" x2="613.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="609.0" y1="990.0" x2="601.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="597.0" y1="990.0" x2="589.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="585.0" y1="990.0" x2="577.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="573.0" y1="990.0" x2="565.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="561.0" y1="990.0" x2="553.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="549.0" y1="990.0" x2="541.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="537.0" y1="990.0" x2="529.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="525.0" y1="990.0" x2="517.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="513.0" y1="990.0" x2="505.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="501.0" y1="990.0" x2="493.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="489.0" y1="990.0" x2="481.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="477.0" y1="990.0" x2="469.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="465.0" y1="990.0" x2="457.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="453.0" y1="990.0" x2="445.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="441.0" y1="990.0" x2="433.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="429.0" y1="990.0" x2="421.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="417.0" y1="990.0" x2="409.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="405.0" y1="990.0" x2="397.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="393.0" y1="990.0" x2="385.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="381.0" y1="990.0" x2="373.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="369.0" y1="990.0" x2="361.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="357.0" y1="990.0" x2="349.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="345.0" y1="990.0" x2="337.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="333.0" y1="990.0" x2="325.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="321.0" y1="990.0" x2="313.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="309.0" y1="990.0" x2="301.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="297.0" y1="990.0" x2="289.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="285.0" y1="990.0" x2="277.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="273.0" y1="990.0" x2="265.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="261.0" y1="990.0" x2="253.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="249.0" y1="990.0" x2="241.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="237.0" y1="990.0" x2="229.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="225.0" y1="990.0" x2="217.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="213.0" y1="990.0" x2="205.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="201.0" y1="990.0" x2="193.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="189.0" y1="990.0" x2="181.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="177.0" y1="990.0" x2="169.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="165.0" y1="990.0" x2="157.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="153.0" y1="990.0" x2="145.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="141.0" y1="990.0" x2="133.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="129.0" y1="990.0" x2="121.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="117.0" y1="990.0" x2="109.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="105.0" y1="990.0" x2="97.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="93.0" y1="990.0" x2="85.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="81.0" y1="990.0" x2="73.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="69.0" y1="990.0" x2="61.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="57.0" y1="990.0" x2="49.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="45.0" y1="990.0" x2="37.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="33.0" y1="990.0" x2="25.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="21.0" y1="990.0" x2="15.0" y2="990.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="990.0" x2="15.0" y2="982.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="978.0" x2="15.0" y2="970.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="966.0" x2="15.0" y2="958.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="954.0" x2="15.0" y2="946.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="942.0" x2="15.0" y2="934.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="930.0" x2="15.0" y2="922.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="918.0" x2="15.0" y2="910.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="906.0" x2="15.0" y2="898.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="894.0" x2="15.0" y2="886.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="882.0" x2="15.0" y2="874.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="870.0" x2="15.0" y2="862.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="858.0" x2="15.0" y2="850.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="846.0" x2="15.0" y2="838.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="834.0" x2="15.0" y2="826.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="822.0" x2="15.0" y2="814.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="810.0" x2="15.0" y2="802.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="798.0" x2="15.0" y2="790.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="786.0" x2="15.0" y2="778.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="774.0" x2="15.0" y2="766.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="762.0" x2="15.0" y2="754.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="750.0" x2="15.0" y2="742.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="738.0" x2="15.0" y2="730.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="726.0" x2="15.0" y2="718.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="714.0" x2="15.0" y2="706.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="702.0" x2="15.0" y2="694.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="690.0" x2="15.0" y2="682.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="678.0" x2="15.0" y2="670.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="666.0" x2="15.0" y2="658.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="654.0" x2="15.0" y2="646.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="642.0" x2="15.0" y2="634.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="630.0" x2="15.0" y2="622.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="618.0" x2="15.0" y2="610.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="606.0" x2="15.0" y2="598.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="594.0" x2="15.0" y2="586.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="582.0" x2="15.0" y2="574.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="570.0" x2="15.0" y2="562.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="558.0" x2="15.0" y2="550.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="546.0" x2="15.0" y2="538.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="534.0" x2="15.0" y2="526.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="522.0" x2="15.0" y2="514.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="510.0" x2="15.0" y2="502.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="498.0" x2="15.0" y2="490.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="486.0" x2="15.0" y2="478.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="474.0" x2="15.0" y2="466.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="462.0" x2="15.0" y2="454.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="450.0" x2="15.0" y2="442.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="438.0" x2="15.0" y2="430.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="426.0" x2="15.0" y2="418.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="414.0" x2="15.0" y2="406.0" stroke="#1F4E79" stroke-width="1.2"/>
+<line x1="15.0" y1="402.0" x2="15.0" y2="400.0" stroke="#1F4E79" stroke-width="1.2"/>
+<rect x="15" y="376" width="210" height="24" rx="0" fill="#DCE8F5" stroke="#1F4E79" stroke-width="1.2"/>
+<text x="26.0" y="393" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" font-style="normal" text-anchor="start" fill="#1F4E79">paquete app.modelo.dao</text>
+<polyline points="600,347 600,400" fill="none" stroke="#1B2631" stroke-width="1.4"/>
+<polygon points="600.0,347.0 606.0,357.0 600.0,367.0 594.0,357.0" fill="#1B2631"/>
+<text x="610.0" y="388" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" font-style="italic" text-anchor="start" fill="#1B2631">1 instancia de cada DAO (comparten la conexión de la petición)</text>
+<line x1="1030.0" y1="339.0" x2="1030.0" y2="345.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="1030.0" y1="349.0" x2="1030.0" y2="355.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="1030.0" y1="359.0" x2="1030.0" y2="365.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="1030.0" y1="369.0" x2="1030.0" y2="375.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="1030.0" y1="379.0" x2="1030.0" y2="385.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="1030.0" y1="389.0" x2="1030.0" y2="395.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="1030.0" y1="399.0" x2="1030.0" y2="400.0" stroke="#1B2631" stroke-width="1.2"/>
+<polyline points="1024.0,389.0 1030.0,400.0 1036.0,389.0" fill="none" stroke="#1B2631" stroke-width="1.3"/>
+<text x="1038.0" y="388" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" font-style="italic" text-anchor="start" fill="#1B2631">consulta</text>
+<rect x="30" y="430" width="270" height="131" rx="0" fill="#fff" stroke="#1F4E79" stroke-width="1.4"/>
+<rect x="30" y="430" width="270" height="45" rx="0" fill="#DCE8F5" stroke="#1F4E79" stroke-width="1.4"/>
+<text x="165.0" y="450" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" text-anchor="middle" fill="#1B2631">AspiranteDAO</text>
+<text x="165.0" y="465" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="normal" font-style="italic" text-anchor="middle" fill="#5F6B73">transaccional.aspirantes</text>
+<text x="38.0" y="492" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+insertar(documento, nombres, apellidos,</text>
+<text x="51.8" y="509" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">correo, contrasena_hash): Aspirante</text>
+<text x="38.0" y="526" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+credenciales(correo): tuple</text>
+<text x="38.0" y="543" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+contar(): int</text>
+<rect x="322" y="430" width="270" height="80" rx="0" fill="#fff" stroke="#1F4E79" stroke-width="1.4"/>
+<rect x="322" y="430" width="270" height="45" rx="0" fill="#DCE8F5" stroke="#1F4E79" stroke-width="1.4"/>
+<text x="457.0" y="450" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" text-anchor="middle" fill="#1B2631">IngenieroDAO</text>
+<text x="457.0" y="465" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="normal" font-style="italic" text-anchor="middle" fill="#5F6B73">conocimiento.ingenieros_conocimiento</text>
+<text x="330.0" y="492" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+credenciales(correo): tuple</text>
+<rect x="614" y="430" width="270" height="80" rx="0" fill="#fff" stroke="#1F4E79" stroke-width="1.4"/>
+<rect x="614" y="430" width="270" height="45" rx="0" fill="#DCE8F5" stroke="#1F4E79" stroke-width="1.4"/>
+<text x="749.0" y="450" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" text-anchor="middle" fill="#1B2631">PreguntaDAO</text>
+<text x="749.0" y="465" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="normal" font-style="italic" text-anchor="middle" fill="#5F6B73">conocimiento.preguntas_cuestionario_...</text>
+<text x="622.0" y="492" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+activas(): list&lt;Pregunta&gt;</text>
+<rect x="906" y="430" width="270" height="80" rx="0" fill="#fff" stroke="#1F4E79" stroke-width="1.4"/>
+<rect x="906" y="430" width="270" height="45" rx="0" fill="#DCE8F5" stroke="#1F4E79" stroke-width="1.4"/>
+<text x="1041.0" y="450" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" text-anchor="middle" fill="#1B2631">HipotesisDAO</text>
+<text x="1041.0" y="465" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="normal" font-style="italic" text-anchor="middle" fill="#5F6B73">conocimiento.hipotesis_programas</text>
+<text x="914.0" y="492" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+activas(): list</text>
+<rect x="420" y="621" width="360" height="157" rx="0" fill="#fff" stroke="#1F4E79" stroke-width="1.4"/>
+<rect x="420" y="621" width="360" height="61" rx="0" fill="#C9DBEF" stroke="#1F4E79" stroke-width="1.4"/>
+<text x="600.0" y="641" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" font-style="italic" text-anchor="middle" fill="#1F4E79">«abstract»</text>
+<text x="600.0" y="657" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="italic" text-anchor="middle" fill="#1B2631">BaseDAO</text>
+<text x="600.0" y="672" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="normal" font-style="italic" text-anchor="middle" fill="#5F6B73">base_dao.py</text>
+<text x="428.0" y="699" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">#_conexion: callable  (conexion_actual)</text>
+<polyline points="420,707 780,707" fill="none" stroke="#1F4E79" stroke-width="1"/>
+<text x="428.0" y="722" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">#_consultar(sql, parametros): list</text>
+<text x="428.0" y="739" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">#_consultar_uno(sql, parametros): dict | None</text>
+<text x="428.0" y="756" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">#_transaccion(): cursor  (COMMIT / ROLLBACK)</text>
+<polyline points="165.0,561 165.0,593" fill="none" stroke="#1B2631" stroke-width="1.1"/>
+<polyline points="457.0,510 457.0,593" fill="none" stroke="#1B2631" stroke-width="1.1"/>
+<polyline points="749.0,510 749.0,593" fill="none" stroke="#1B2631" stroke-width="1.1"/>
+<polyline points="1041.0,510 1041.0,593" fill="none" stroke="#1B2631" stroke-width="1.1"/>
+<polyline points="165.0,593 1041.0,593" fill="none" stroke="#1B2631" stroke-width="1.1"/>
+<polyline points="600,593 600,621" fill="none" stroke="#1B2631" stroke-width="1.1"/>
+<polygon points="600.0,621.0 592.0,606.0 608.0,606.0" fill="#fff" stroke="#1B2631" stroke-width="1.2"/>
+<rect x="30" y="838" width="270" height="114" rx="0" fill="#fff" stroke="#1F4E79" stroke-width="1.4"/>
+<rect x="30" y="838" width="270" height="45" rx="0" fill="#DCE8F5" stroke="#1F4E79" stroke-width="1.4"/>
+<text x="165.0" y="858" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" text-anchor="middle" fill="#1B2631">HechoDAO</text>
+<text x="165.0" y="873" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="normal" font-style="italic" text-anchor="middle" fill="#5F6B73">conocimiento.hechos_perfil (RC)</text>
+<text x="38.0" y="900" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+derivar(respuesta): Hecho | None</text>
+<text x="38.0" y="917" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+listar(): list</text>
+<text x="38.0" y="934" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+rangos_por_variable(): dict</text>
+<rect x="322" y="838" width="270" height="182" rx="0" fill="#fff" stroke="#1F4E79" stroke-width="1.4"/>
+<rect x="322" y="838" width="270" height="45" rx="0" fill="#DCE8F5" stroke="#1F4E79" stroke-width="1.4"/>
+<text x="457.0" y="858" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" text-anchor="middle" fill="#1B2631">GranuloDAO</text>
+<text x="457.0" y="873" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="normal" font-style="italic" text-anchor="middle" fill="#5F6B73">conocimiento.granulos_hecho_hipotesis (RG)</text>
+<text x="330.0" y="900" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+por_hecho(id_hecho): list&lt;Granulo&gt;</text>
+<text x="330.0" y="917" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+listar(codigo_hipotesis): list</text>
+<text x="330.0" y="934" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+obtener(id_granulo): dict</text>
+<text x="330.0" y="951" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+resumen_por_hipotesis(): list</text>
+<text x="330.0" y="968" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+contar_activos(): int</text>
+<text x="330.0" y="985" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+insertar(id_hecho, id_hip, peso, id_ing): str</text>
+<text x="330.0" y="1002" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+actualizar(id_granulo, peso, activo, id_ing)</text>
+<rect x="614" y="838" width="270" height="80" rx="0" fill="#fff" stroke="#1F4E79" stroke-width="1.4"/>
+<rect x="614" y="838" width="270" height="45" rx="0" fill="#DCE8F5" stroke="#1F4E79" stroke-width="1.4"/>
+<text x="749.0" y="858" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" text-anchor="middle" fill="#1B2631">ReglaNoConcluyenteDAO</text>
+<text x="749.0" y="873" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="normal" font-style="italic" text-anchor="middle" fill="#5F6B73">conocimiento.reglas_resultado_no_... (RN)</text>
+<text x="622.0" y="900" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+activas(): list&lt;ReglaNoConcluyente&gt;</text>
+<rect x="906" y="838" width="270" height="165" rx="0" fill="#fff" stroke="#1F4E79" stroke-width="1.4"/>
+<rect x="906" y="838" width="270" height="45" rx="0" fill="#DCE8F5" stroke="#1F4E79" stroke-width="1.4"/>
+<text x="1041.0" y="858" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" text-anchor="middle" fill="#1B2631">EvaluacionDAO</text>
+<text x="1041.0" y="873" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="normal" font-style="italic" text-anchor="middle" fill="#5F6B73">transaccional: 5 tablas de la evaluación</text>
+<text x="914.0" y="900" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+insertar(id_asp, respuestas, resultado): int</text>
+<text x="914.0" y="917" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+listar_por_aspirante(id_aspirante): list</text>
+<text x="914.0" y="934" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+listar_todas(texto, limite): list</text>
+<text x="914.0" y="951" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+detalle(id_evaluacion): dict</text>
+<text x="914.0" y="968" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+contar(): int</text>
+<text x="914.0" y="985" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+programas_mas_frecuentes(limite): list</text>
+<polyline points="165.0,838 165.0,810" fill="none" stroke="#1B2631" stroke-width="1.1"/>
+<polyline points="457.0,838 457.0,810" fill="none" stroke="#1B2631" stroke-width="1.1"/>
+<polyline points="749.0,838 749.0,810" fill="none" stroke="#1B2631" stroke-width="1.1"/>
+<polyline points="1041.0,838 1041.0,810" fill="none" stroke="#1B2631" stroke-width="1.1"/>
+<polyline points="165.0,810 1041.0,810" fill="none" stroke="#1B2631" stroke-width="1.1"/>
+<polyline points="600,810 600,778" fill="none" stroke="#1B2631" stroke-width="1.1"/>
+<polygon points="600.0,778.0 608.0,793.0 592.0,793.0" fill="#fff" stroke="#1B2631" stroke-width="1.2"/>
+<rect x="420" y="1030" width="360" height="158" rx="0" fill="#fff" stroke="#5F6B73" stroke-width="1.4"/>
+<rect x="420" y="1030" width="360" height="45" rx="0" fill="#F1F3F4" stroke="#5F6B73" stroke-width="1.4"/>
+<text x="600.0" y="1050" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" text-anchor="middle" fill="#1B2631">FabricaConexion</text>
+<text x="600.0" y="1065" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="normal" font-style="italic" text-anchor="middle" fill="#5F6B73">app/modelo/conexion.py</text>
+<text x="428.0" y="1092" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">-_pool: ThreadedConnectionPool (psycopg2)</text>
+<polyline points="420,1100 780,1100" fill="none" stroke="#5F6B73" stroke-width="1"/>
+<text x="428.0" y="1115" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+obtener(): connection</text>
+<text x="428.0" y="1132" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+devolver(conexion)</text>
+<text x="428.0" y="1149" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+verificar()</text>
+<text x="428.0" y="1166" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">+cerrar()</text>
+<line x1="300.0" y1="990.0" x2="300.0" y2="996.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="300.0" y1="1000.0" x2="300.0" y2="1006.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="300.0" y1="1010.0" x2="300.0" y2="1016.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="300.0" y1="1020.0" x2="300.0" y2="1026.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="300.0" y1="1030.0" x2="300.0" y2="1036.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="300.0" y1="1040.0" x2="300.0" y2="1046.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="300.0" y1="1050.0" x2="300.0" y2="1056.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="300.0" y1="1060.0" x2="300.0" y2="1066.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="300.0" y1="1070.0" x2="300.0" y2="1076.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="300.0" y1="1080.0" x2="300.0" y2="1086.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="300.0" y1="1090.0" x2="300.0" y2="1096.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="300.0" y1="1100.0" x2="300.0" y2="1106.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="300.0" y1="1109.0" x2="306.0" y2="1109.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="310.0" y1="1109.0" x2="316.0" y2="1109.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="320.0" y1="1109.0" x2="326.0" y2="1109.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="330.0" y1="1109.0" x2="336.0" y2="1109.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="340.0" y1="1109.0" x2="346.0" y2="1109.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="350.0" y1="1109.0" x2="356.0" y2="1109.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="360.0" y1="1109.0" x2="366.0" y2="1109.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="370.0" y1="1109.0" x2="376.0" y2="1109.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="380.0" y1="1109.0" x2="386.0" y2="1109.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="390.0" y1="1109.0" x2="396.0" y2="1109.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="400.0" y1="1109.0" x2="406.0" y2="1109.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="410.0" y1="1109.0" x2="416.0" y2="1109.0" stroke="#1B2631" stroke-width="1.2"/>
+<polyline points="409.0,1115.0 420.0,1109.0 409.0,1103.0" fill="none" stroke="#1B2631" stroke-width="1.3"/>
+<text x="310.0" y="1101.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" font-style="italic" text-anchor="start" fill="#1B2631">usa la conexión</text>
+<path d="M890,1050 v110 a110,18 0 0,0 220,0 v-110" fill="#DCE8F5" stroke="#1F4E79" stroke-width="1.4"/>
+<ellipse cx="1000" cy="1050" rx="110" ry="18" fill="#C9DBEF" stroke="#1F4E79" stroke-width="1.4"/>
+<text x="1000.0" y="1098" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" text-anchor="middle" fill="#1F4E79">PostgreSQL</text>
+<text x="1000.0" y="1118" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631">sistema_experto_orientacion</text>
+<text x="1000.0" y="1136" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631">esquemas: conocimiento</text>
+<text x="1000.0" y="1152" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631">y transaccional</text>
+<polyline points="780,1109.0 890,1109.0" fill="none" stroke="#1B2631" stroke-width="1.2"/>
+<polygon points="890.0,1109.0 879.0,1114.0 879.0,1104.0" fill="#1B2631"/>
+<text x="835.0" y="1101.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" font-style="italic" text-anchor="middle" fill="#1B2631">SQL</text>
+<rect x="20" y="1218" width="1160" height="62" rx="0" fill="#fff" stroke="#5F6B73" stroke-width="1.2"/>
+<text x="32.0" y="1238" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" font-style="normal" text-anchor="start" fill="#5F6B73">«dataclass» entidades.py — objetos que devuelven los DAO y el motor:</text>
+<rect x="32" y="1248" width="78.60000000000001" height="22" rx="3" fill="#F1F3F4" stroke="#5F6B73" stroke-width="0.9"/>
+<text x="71.30000000000001" y="1264" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631">Aspirante</text>
+<rect x="119.60000000000001" y="1248" width="167.4" height="22" rx="3" fill="#F1F3F4" stroke="#5F6B73" stroke-width="0.9"/>
+<text x="203.3" y="1264" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631">IngenieroConocimiento</text>
+<rect x="296.0" y="1248" width="71.2" height="22" rx="3" fill="#F1F3F4" stroke="#5F6B73" stroke-width="0.9"/>
+<text x="331.6" y="1264" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631">Pregunta</text>
+<rect x="376.2" y="1248" width="78.60000000000001" height="22" rx="3" fill="#F1F3F4" stroke="#5F6B73" stroke-width="0.9"/>
+<text x="415.5" y="1264" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631">Respuesta</text>
+<rect x="463.8" y="1248" width="49.0" height="22" rx="3" fill="#F1F3F4" stroke="#5F6B73" stroke-width="0.9"/>
+<text x="488.3" y="1264" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631">Hecho</text>
+<rect x="521.8" y="1248" width="63.800000000000004" height="22" rx="3" fill="#F1F3F4" stroke="#5F6B73" stroke-width="0.9"/>
+<text x="553.6999999999999" y="1264" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631">Granulo</text>
+<rect x="594.5999999999999" y="1248" width="145.20000000000002" height="22" rx="3" fill="#F1F3F4" stroke="#5F6B73" stroke-width="0.9"/>
+<text x="667.1999999999999" y="1264" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631">ReglaNoConcluyente</text>
+<rect x="748.8" y="1248" width="123.0" height="22" rx="3" fill="#F1F3F4" stroke="#5F6B73" stroke-width="0.9"/>
+<text x="810.3" y="1264" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631">ConteoHipotesis</text>
+<rect x="880.8" y="1248" width="152.6" height="22" rx="3" fill="#F1F3F4" stroke="#5F6B73" stroke-width="0.9"/>
+<text x="957.0999999999999" y="1264" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631">ResultadoInferencia</text>
+<line x1="120.0" y1="990.0" x2="120.0" y2="996.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1000.0" x2="120.0" y2="1006.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1010.0" x2="120.0" y2="1016.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1020.0" x2="120.0" y2="1026.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1030.0" x2="120.0" y2="1036.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1040.0" x2="120.0" y2="1046.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1050.0" x2="120.0" y2="1056.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1060.0" x2="120.0" y2="1066.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1070.0" x2="120.0" y2="1076.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1080.0" x2="120.0" y2="1086.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1090.0" x2="120.0" y2="1096.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1100.0" x2="120.0" y2="1106.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1110.0" x2="120.0" y2="1116.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1120.0" x2="120.0" y2="1126.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1130.0" x2="120.0" y2="1136.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1140.0" x2="120.0" y2="1146.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1150.0" x2="120.0" y2="1156.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1160.0" x2="120.0" y2="1166.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1170.0" x2="120.0" y2="1176.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1180.0" x2="120.0" y2="1186.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1190.0" x2="120.0" y2="1196.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1200.0" x2="120.0" y2="1206.0" stroke="#1B2631" stroke-width="1.2"/>
+<line x1="120.0" y1="1210.0" x2="120.0" y2="1216.0" stroke="#1B2631" stroke-width="1.2"/>
+<polyline points="114.0,1207.0 120.0,1218.0 126.0,1207.0" fill="none" stroke="#1B2631" stroke-width="1.3"/>
+<text x="128.0" y="1208" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" font-style="italic" text-anchor="start" fill="#1B2631">devuelve</text>
+</svg>

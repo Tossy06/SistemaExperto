@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% import "componentes/macros.html" as m with context %}
+{% block titulo %}Resultado de la evaluación {{ evaluacion.id_evaluacion }}{% endblock %}
+{% block contenido %}
+{% set es_aspirante = usuario.rol == 'aspirante' %}
+{% set primero = cinco[0] if cinco else None %}
+{% set maximo = primero.probabilidad if primero else 1 %}
+{# Empate en el primer lugar: todas las hipótesis contabilizadas con la probabilidad máxima (pueden ser más de cinco). #}
+{% set empatados = contabilizacion|selectattr('probabilidad', 'equalto', maximo)|list if primero else [] %}
+<div class="pagina resultado">
+  <nav class="migas" aria-label="Ruta">
+    <a href="{{ volver }}">{{ 'Mis evaluaciones' if es_aspirante else 'Evaluaciones' }}</a>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">Evaluación {{ evaluacion.id_evaluacion }}</span>
+  </nav>
+  <p class="resultado-meta">
+    {% if not es_aspirante %}{{ evaluacion.aspirante }}, documento {{ evaluacion.documento }}.{% endif %}
+    Evaluación {{ evaluacion.id_evaluacion }} del {{ evaluacion.fecha_evaluacion|fecha }}
+  </p>
+
+  {% if marcas %}
+  <section class="aviso" aria-labelledby="titulo-aviso">
+    <h2 id="titulo-aviso">Este resultado no es concluyente</h2>
+    <ul>
+      {% for marca in marcas %}<li>{{ marca.descripcion }} <span class="codigo">{{ marca.codigo_regla }}</span></li>{% endfor %}
+    </ul>
+    <p>Úselo como punto de partida y converse con un orientador antes de decidir.</p>
+  </section>
+  {% endif %}
+
+  <div class="resultado-fila">
+    <section class="tarjeta" aria-labelledby="titulo-resultado">
+      {% if primero and empatados|length > 1 %}
+      <h1 id="titulo-resultado" class="resultado-titulo">
+        <span class="resultado-antetitulo">Empate en el primer lugar</span>
+        <span class="resaltado resaltado-animado">{{ empatados|length }} programas</span>
+      </h1>
+      <p class="resultado-dato">Todos con <strong>{{ maximo|pct }}</strong> de afinidad:
+        {{ empatados|map(attribute='programa_academico')|join(', ') }}. El orden entre ellos es solo por código
+        (regla RI-03), no indica preferencia.</p>
+      {% elif primero %}
+      <h1 id="titulo-resultado" class="resultado-titulo">
+        <span class="resultado-antetitulo">{{ 'Su programa' if es_aspirante else 'Programa' }} con mayor afinidad</span>
+        <span class="resaltado resaltado-animado">{{ primero.programa_academico }}</span>
+      </h1>
+      <p class="resultado-dato"><strong>{{ primero.probabilidad|pct }}</strong> de afinidad.
+        {{ primero.numero_coincidencias }} de {{ 'sus' if es_aspirante else 'las' }} {{ respuestas|length }} respuestas lo respaldan.</p>
+      {% endif %}
+      <h2 class="tarjeta-titulo tarjeta-titulo-abajo">Las cinco hipótesis de mayor probabilidad</h2>
+      {{ m.ranking(cinco, maximo, 1) }}
+    </section>
+
+    <section class="tarjeta" aria-labelledby="titulo-respuestas">
+      <h2 id="titulo-respuestas" class="tarjeta-titulo">{{ 'Sus respuestas' if es_aspirante else 'Respuestas del aspirante' }}</h2>
+      <div class="tabla-desplazable">
+      <table class="tabla tabla-compacta tabla-respuestas">
+        <thead><tr><th scope="col">Pregunta</th><th scope="col" class="derecha">Respuesta</th><th scope="col">Clasificación</th></tr></thead>
+        <tbody>
+          {% for r in respuestas %}
+          <tr><td>{{ r.variable }}</td><td class="derecha cifra">{{ r.valor|replace('.', ',') }}</td>
+              <td><span class="nivel nivel-{{ r.valor_clasificado|lower }}">{{ r.valor_clasificado }}</span></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    </section>
+  </div>
+
+  {% if arbol and arbol.hijos %}
+  <section class="recorrido" aria-labelledby="titulo-arbol">
+    <div class="recorrido-encabezado">
+      <div>
+        <h2 id="titulo-arbol">Recorrido por el árbol de decisión</h2>
+        <p class="nota">El árbol completo de la base de conocimiento: {{ arbol.hojas }} programas y las condiciones de
+          resultado no concluyente. Cada columna es un dato del perfil con el peso que aporta. En azul, lo que coincide
+          con {{ 'sus respuestas' if es_aspirante else 'las respuestas' }}; en gris, lo que no. Cada hoja muestra la
+          afinidad que obtuvo el programa.</p>
+      </div>
+      <button class="boton boton-secundario boton-pequeno no-imprimir" type="button" data-repetir-arbol hidden>Ver de nuevo</button>
+    </div>
+    {% for c in arbol.niveles_sin_coincidencia %}
+    <p class="nota-arbol" role="note">
+      <strong>Columna {{ c.nivel }} sin coincidencias.</strong>
+      {% if c.grupo %}Ningún dato de «{{ c.grupo }}»{% else %}Ningún dato de esta columna{% endif %}
+      quedó en {{ c.valores_con_peso|join(' o ') }}: {{ 'sus' if es_aspirante else 'las' }} respuestas quedaron en
+      {{ c.niveles_aspirante|map('lower')|join(' o ') }}. En la base de conocimiento solo
+      {{ c.valores_con_peso|join(' o ') }} aporta peso en esta columna, por eso toda la columna aparece en gris.
+      Las demás columnas suman por su cuenta: cada dato del perfil aporta su peso aunque otro no coincida.
+    </p>
+    {% endfor %}
+    <div class="arbol-marco">
+      <div class="arbol arbol-animado" data-arbol>
+        <ul>
+          <li class="raiz" style="--nivel: 0">
+            <span class="nodo nodo-raiz">{{ 'Su perfil' if es_aspirante else 'Perfil del aspirante' }}</span>
+            <ul>
+              {% for n in arbol.hijos recursive %}
+              {% if n.hoja %}
+              <li class="hoja{% if n.numero_coincidencias %} hoja-con{% endif %}{% if n.posicion or (n.probabilidad is not none and n.probabilidad == maximo) %} hoja-cinco{% endif %}" style="--nivel: {{ n.nivel }}">
+                <span class="nodo nodo-hoja{% if n.probabilidad is not none and n.probabilidad == maximo %} nodo-primero{% endif %}"
+                      title="{{ n.numero_coincidencias }} de {{ n.numero_granulos }} datos del perfil coinciden">
+                  <span class="nodo-codigo">{{ n.posicion if n.posicion else n.codigo }}</span>
+                  <span class="nodo-texto">{{ n.programa_academico }}</span>
+                  <span class="nodo-cifra">{{ n.probabilidad|pct if n.probabilidad is not none else '0 %' }}</span>
+                </span>
+              </li>
+              {% elif n.regla %}
+              <li class="hoja hoja-regla{% if n.cumple %} hoja-cumple{% endif %}" style="--nivel: {{ n.nivel }}">
+                <span class="nodo nodo-hoja" title="{{ n.descripcion }}">
+                  <span class="nodo-codigo">{{ n.codigo }}</span>
+                  <span class="nodo-texto">{{ n.descripcion.split(':')[0] }}</span>
+                  <span class="nodo-cifra">{{ 'Se cumple' if n.cumple else 'No' }}</span>
+                </span>
+              </li>
+              {% else %}
+              <li class="{{ 'rama-si' if n.coincide else 'rama-no' }}{% if n.condiciones %} rama-condiciones{% endif %} columna-{{ n.nivel }}" style="--nivel: {{ n.nivel }}">
+                {% if n.condiciones %}
+                <span class="nodo nodo-condiciones">
+                  <span class="nodo-texto">Condiciones de resultado no concluyente</span>
+                  <span class="nodo-marca" aria-hidden="true">{{ '!' if n.coincide else '✓' }}</span>
+                </span>
+                {% else %}
+                <span class="nodo" title="{{ n.variable }} = {{ n.valor }}{% if not n.coincide and n.su_nivel %} (nivel del aspirante: {{ n.su_nivel|lower }}){% endif %}">
+                  <span class="nodo-texto"><small>{{ n.variable }}</small> <strong>{{ n.valor }}</strong></span>
+                  <span class="nodo-marca">{% if n.coincide %}+{{ n.peso|num if n.peso is not none else '' }}{% else %}<span aria-label="no coincide">✕</span>{% endif %}</span>
+                </span>
+                {% endif %}
+                {% if n.hijos %}<ul>{{ loop(n.hijos) }}</ul>{% endif %}
+              </li>
+              {% endif %}
+              {% endfor %}
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <div class="resultado-fila">
+    <section class="tarjeta" aria-labelledby="titulo-porque">
+      <h2 id="titulo-porque" class="tarjeta-titulo">Por qué aparecen estos programas</h2>
+      <p class="nota">Cada programa suma el peso de las reglas que coinciden con el perfil. La afinidad es esa suma
+        dividida entre la suma de todos los programas.</p>
+      <div class="explicaciones">
+        {% for h in cinco %}
+        <details class="explicacion" {% if loop.first %}open{% endif %}>
+          <summary>
+            <span class="explicacion-posicion">{{ h.posicion }}</span>
+            <span>{{ h.programa_academico }}</span>
+            <span class="cifra">{{ h.probabilidad|pct }}</span>
+          </summary>
+          <table class="tabla tabla-compacta">
+            <thead><tr><th scope="col">Dato del perfil</th><th scope="col">Regla</th><th scope="col" class="derecha">Peso</th></tr></thead>
+            <tbody>
+              {% for a in h.apoyos %}
+              <tr><td>{{ a.variable }}: {{ a.valor_clasificado|lower }}</td><td class="codigo">{{ a.codigo_regla }}</td><td class="derecha cifra">{{ a.peso|num }}</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </details>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="tarjeta" aria-labelledby="titulo-contabilizacion">
+      <h2 id="titulo-contabilizacion" class="tarjeta-titulo">Todos los programas con coincidencias</h2>
+      <p class="nota">Tabla de contabilización: reglas que coincidieron, suma de pesos y afinidad de cada programa.</p>
+      <div class="tabla-marco tabla-llena">
+        <table class="tabla tabla-compacta">
+          <thead><tr><th scope="col">Programa</th><th scope="col" class="derecha">Reglas</th><th scope="col" class="derecha">Suma</th><th scope="col" class="derecha">Afinidad</th></tr></thead>
+          <tbody>
+            {% for c in contabilizacion %}
+            <tr {% if loop.index <= 5 %}class="fila-destacada"{% endif %}><td>{{ c.programa_academico }}{% if not es_aspirante %} <span class="codigo">{{ c.codigo }}</span>{% endif %}</td>
+              <td class="derecha cifra">{{ c.numero_coincidencias }}</td><td class="derecha cifra">{{ c.suma_pesos|num }}</td>
+              <td class="derecha cifra">{{ c.probabilidad|pct }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div class="resultado-pie">
+    <p class="descargo">La afinidad indica qué tanto se parece {{ 'su' if es_aspirante else 'el' }} perfil al de cada
+      programa según la base de conocimiento. No es una decisión ni una recomendación de admisión.</p>
+    <div class="acciones no-imprimir">
+      {% if es_aspirante %}
+      <a class="boton boton-principal" href="{{ url_for('aspirante.cuestionario') }}">Responder de nuevo</a>
+      {% endif %}
+      <button class="boton boton-secundario" type="button" data-imprimir>Imprimir o guardar en PDF</button>
+    </div>
+  </div>
+</div>
+{% endblock %}

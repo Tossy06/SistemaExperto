@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% import "componentes/macros.html" as m with context %}
+{% block titulo %}Agregar gránulo{% endblock %}
+{% block contenido %}
+<div class="pagina pagina-estrecha">
+  <nav class="migas" aria-label="Ruta">
+    <a href="{{ url_for('ingeniero.granulos') }}">Gránulos</a><span aria-hidden="true">/</span><span aria-current="page">Agregar</span>
+  </nav>
+  <header class="pagina-encabezado">
+    <h1>Agregar gránulo</h1>
+    <p class="entrada">Registre una regla del experto. El código RG se asigna solo y el motor la usará desde la próxima evaluación.</p>
+  </header>
+
+  <form class="formulario" method="post" action="{{ url_for('ingeniero.granulo_crear') }}" novalidate>
+    {{ m.csrf() }}
+    <div class="campo{% if errores.id_hecho %} campo-con-error{% endif %}">
+      <label for="f-id_hecho">Si el aspirante tiene este dato</label>
+      <select id="f-id_hecho" name="id_hecho" {% if errores.id_hecho %}aria-invalid="true" aria-describedby="f-id_hecho-error"{% endif %}>
+        <option value="">Elija un dato del perfil</option>
+        {% for variable, hechos_variable in hechos.items() %}
+        <optgroup label="{{ variable }}">
+          {% for h in hechos_variable %}
+          <option value="{{ h.id_hecho }}" {% if datos.id_hecho == h.id_hecho|string %}selected{% endif %}>{{ variable }}: {{ h.valor_clasificado|lower }}</option>
+          {% endfor %}
+        </optgroup>
+        {% endfor %}
+      </select>
+      {% if errores.id_hecho %}<p class="campo-error" id="f-id_hecho-error">{{ errores.id_hecho }}</p>{% endif %}
+    </div>
+
+    <div class="campo{% if errores.id_hipotesis %} campo-con-error{% endif %}">
+      <label for="f-id_hipotesis">Entonces suma afinidad al programa</label>
+      <select id="f-id_hipotesis" name="id_hipotesis" {% if errores.id_hipotesis %}aria-invalid="true" aria-describedby="f-id_hipotesis-error"{% endif %}>
+        <option value="">Elija un programa</option>
+        {% for h in hipotesis %}
+        <option value="{{ h.id_hipotesis }}" {% if datos.id_hipotesis == h.id_hipotesis|string %}selected{% endif %}>{{ h.codigo }} {{ h.programa_academico }}</option>
+        {% endfor %}
+      </select>
+      {% if errores.id_hipotesis %}<p class="campo-error" id="f-id_hipotesis-error">{{ errores.id_hipotesis }}</p>{% endif %}
+    </div>
+
+    {{ m.campo('peso', 'Con este peso', datos.peso, errores.get('peso'), ayuda='Entre 0,00 y 1,00. En la base actual: 0,40 para área e interés y 0,20 para estilo de trabajo.', extra='inputmode="decimal"') }}
+
+    <div class="acciones">
+      <button class="boton boton-principal" type="submit">Guardar gránulo</button>
+      <a class="boton boton-texto" href="{{ url_for('ingeniero.granulos') }}">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

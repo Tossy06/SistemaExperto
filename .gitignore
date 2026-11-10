@@ -1,0 +1,36 @@
+# ---------- Credenciales y configuración local ----------
+# .env tiene las claves de la base de datos; solo se sube la plantilla .env.example
+.env
+.env.*
+!.env.example
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ---------- Registros y temporales ----------
+*.log
+*.tmp
+*.bak
+
+# ---------- Editores, sistema operativo y herramientas locales ----------
+.vscode/
+.idea/
+.claude/
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# ---------- Legado (AWS Lambda) ----------
+# Paquete de despliegue generado: dependencias instaladas y el .zip que se sube a AWS (se regeneran).
+legado/aws_lambda/despliegue/paquete/
+legado/aws_lambda/despliegue/*.zip

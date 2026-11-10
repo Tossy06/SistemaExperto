@@ -1,0 +1,33 @@
+{# Campo de formulario con etiqueta, ayuda y error accesibles #}
+{% macro campo(nombre, etiqueta, valor='', error=None, tipo='text', ayuda=None, autocompletar=None, extra='', prefijo='f') %}
+<div class="campo{% if error %} campo-con-error{% endif %}">
+  <label for="{{ prefijo }}-{{ nombre }}">{{ etiqueta }}</label>
+  {% if ayuda %}<p class="campo-ayuda" id="{{ prefijo }}-{{ nombre }}-ayuda">{{ ayuda }}</p>{% endif %}
+  <input id="{{ prefijo }}-{{ nombre }}" name="{{ nombre }}" type="{{ tipo }}" value="{{ valor }}"
+         {% if autocompletar %}autocomplete="{{ autocompletar }}"{% endif %}
+         {% if error or ayuda %}aria-describedby="{% if ayuda %}{{ prefijo }}-{{ nombre }}-ayuda {% endif %}{% if error %}{{ prefijo }}-{{ nombre }}-error{% endif %}"{% endif %}
+         {% if error %}aria-invalid="true"{% endif %} {{ extra|safe }}>
+  {% if error %}<p class="campo-error" id="{{ prefijo }}-{{ nombre }}-error">{{ error }}</p>{% endif %}
+</div>
+{% endmacro %}
+
+{% macro csrf() %}<input type="hidden" name="csrf" value="{{ token_csrf() }}">{% endmacro %}
+
+{# Lista de programas 2 a 5 (o 1 a 5) con barra de probabilidad relativa al mayor valor #}
+{% macro ranking(filas, maximo, desde=1) %}
+<ol class="ranking" start="{{ desde }}">
+  {% for h in filas %}
+  <li class="ranking-fila" style="--proporcion: {{ (h.probabilidad / maximo) if maximo else 0 }}">
+    <span class="ranking-posicion" aria-hidden="true">{{ desde + loop.index0 }}</span>
+    <span class="ranking-programa">{{ h.programa_academico }}{% if usuario and usuario.rol == 'ingeniero' %} <span class="codigo">{{ h.codigo }}</span>{% endif %}</span>
+    <span class="ranking-barra" aria-hidden="true"><span></span></span>
+    <span class="ranking-valor">{{ h.probabilidad|pct }}</span>
+  </li>
+  {% endfor %}
+</ol>
+{% endmacro %}
+
+{% macro estado_evaluacion(no_concluyente) %}
+  {% if no_concluyente %}<span class="pastilla pastilla-aviso">No concluyente</span>
+  {% else %}<span class="pastilla pastilla-ok">Concluyente</span>{% endif %}
+{% endmacro %}

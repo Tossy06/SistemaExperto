@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block titulo %}Reglas y rangos{% endblock %}
+{% block contenido %}
+<div class="pagina">
+  <header class="pagina-encabezado">
+    <h1>Reglas y rangos</h1>
+    <p class="entrada">Cómo el sistema convierte cada respuesta en un dato del perfil y cuándo marca un resultado como no concluyente.</p>
+  </header>
+
+  <section aria-labelledby="titulo-rn">
+    <h2 id="titulo-rn">Reglas de resultado no concluyente</h2>
+    <div class="tabla-marco">
+      <table class="tabla">
+        <thead><tr><th scope="col">Regla</th><th scope="col">Se cumple cuando</th><th scope="col">Condición</th></tr></thead>
+        <tbody>
+          {% for r in reglas %}
+          <tr><td class="codigo">{{ r.codigo_regla }}</td><td>{{ r.descripcion }}</td>
+            <td>Datos de tipo {{ r.tipo_variable|lower }} con valor {{ r.valor_hecho|lower }} {{ '=' if r.operador == '=' else '≥' }} {{ r.cantidad }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="titulo-rc">
+    <h2 id="titulo-rc">Rangos de clasificación</h2>
+    <div class="rangos">
+      {% for variable, hechos in variables.items() %}
+      <div class="rango">
+        <h3>{{ variable }}</h3>
+        <ul>
+          {% for h in hechos %}
+          <li><span class="nivel nivel-{{ h.valor_clasificado|lower }}">{{ h.valor_clasificado }}</span>
+            {% if h.rango_minimo is not none %}<span class="cifra">{{ h.rango_minimo|num }} a {{ h.rango_maximo|num }}</span>{% else %}<span>opción</span>{% endif %}
+            <span class="codigo">{{ h.codigo }}</span></li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

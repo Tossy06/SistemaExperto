@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Orientación Académica</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <header class="barra">
+    <span class="barra-titulo">Sistema Experto de Apoyo a la Orientación Académica</span>
+    <span class="barra-info">Base de conocimiento: Amazon S3 · API: AWS Lambda</span>
+  </header>
+
+  <main>
+    <h1>Evaluación vocacional</h1>
+
+    <div class="pestanas" role="tablist">
+      <button type="button" role="tab" id="tab-cuestionario" aria-controls="panel-cuestionario" aria-selected="true">Cuestionario</button>
+      <button type="button" role="tab" id="tab-resultado" aria-controls="panel-resultado" aria-selected="false" disabled>Resultado</button>
+    </div>
+
+    <section class="tarjeta" id="panel-cuestionario" role="tabpanel" aria-labelledby="tab-cuestionario">
+      <h2>Cuestionario de evaluación vocacional</h2>
+      <p class="ayuda">Responda las 11 preguntas. Todas son obligatorias.</p>
+      <p id="estado" role="status">Cargando el cuestionario…</p>
+
+      <form id="cuestionario" hidden novalidate>
+        <div class="grupos" id="grupos"></div>
+        <div class="acciones">
+          <button type="button" class="secundario" id="ejemplo">Cargar ejemplo</button>
+          <button type="button" class="secundario" id="limpiar">Limpiar</button>
+          <button type="submit" class="accion" id="evaluar">Evaluar perfil</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="tarjeta" id="panel-resultado" role="tabpanel" aria-labelledby="tab-resultado" hidden>
+      <h2>Resultado de la evaluación</h2>
+      <p class="ayuda">Cinco hipótesis de mayor probabilidad</p>
+      <div id="grafico" class="grafico"></div>
+      <div id="marcas"></div>
+
+      <div class="tablas">
+        <div>
+          <h2>Tabla de contabilización de coincidencias</h2>
+          <div class="tabla-marco">
+            <table>
+              <thead>
+                <tr><th>Hipótesis</th><th>Programa académico</th><th class="centro">Coincidencias</th><th class="centro">Suma pesos</th><th class="derecha">Probabilidad</th></tr>
+              </thead>
+              <tbody id="contabilizacion"></tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <h2>Hechos que coincidieron (cinco hipótesis)</h2>
+          <div class="tabla-marco">
+            <table>
+              <thead>
+                <tr><th>Hipótesis</th><th>Regla</th><th>Hecho</th><th class="derecha">Peso</th></tr>
+              </thead>
+              <tbody id="coincidencias"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <details>
+        <summary>Ver cómo razonó el sistema (encadenamiento hacia adelante)</summary>
+        <ol id="traza"></ol>
+      </details>
+
+      <p class="aviso-legal">Las hipótesis expresan la probabilidad de afinidad con cada programa académico; no constituyen una decisión ni una recomendación.</p>
+    </section>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

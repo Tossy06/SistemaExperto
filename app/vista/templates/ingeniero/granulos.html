@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block titulo %}Gránulos por hipótesis{% endblock %}
+{% block contenido %}
+<div class="pagina">
+  <header class="pagina-encabezado pagina-encabezado-acciones">
+    <div>
+      <h1>Gránulos por hipótesis</h1>
+      <p class="entrada">Cada gránulo dice: si el aspirante tiene este dato en su perfil, el programa suma este peso.</p>
+    </div>
+    <a class="boton boton-principal" href="{{ url_for('ingeniero.granulo_nuevo') }}">Agregar gránulo</a>
+  </header>
+
+  <form class="filtro" method="get" action="{{ url_for('ingeniero.granulos') }}" data-envio-automatico>
+    <label for="filtro-hipotesis">Programa</label>
+    <select id="filtro-hipotesis" name="hipotesis">
+      <option value="">Todos los programas</option>
+      {% for h in hipotesis %}
+      <option value="{{ h.codigo }}" {% if h.codigo == codigo %}selected{% endif %}>{{ h.codigo }} {{ h.programa_academico }}</option>
+      {% endfor %}
+    </select>
+    <button class="boton boton-secundario" type="submit" data-solo-sin-js>Filtrar</button>
+    <p class="filtro-total" role="status">{{ total }} gránulos, {{ activos }} activos</p>
+  </form>
+
+  {% for (codigo_h, programa), filas in grupos.items() %}
+  <section class="grupo-granulos" aria-labelledby="g-{{ codigo_h }}">
+    <h2 id="g-{{ codigo_h }}">{{ programa }} <span class="codigo">{{ codigo_h }}</span></h2>
+    <div class="tabla-marco">
+      <table class="tabla">
+        <thead><tr><th scope="col">Regla</th><th scope="col">Dato del perfil</th><th scope="col">Peso</th>
+          <th scope="col">Estado</th><th scope="col">Última modificación</th><th scope="col"><span class="oculto">Acciones</span></th></tr></thead>
+        <tbody>
+          {% for g in filas %}
+          <tr id="{{ g.regla }}" {% if not g.activo %}class="fila-inactiva"{% endif %}>
+            <td class="codigo">{{ g.regla }}</td>
+            <td>{{ g.variable }}: {{ g.valor_hecho|lower }}</td>
+            <td><span class="peso" style="--peso: {{ g.peso }}"><span class="cifra">{{ g.peso|num }}</span></span></td>
+            <td>{% if g.activo %}<span class="pastilla pastilla-ok">Activo</span>{% else %}<span class="pastilla">Inactivo</span>{% endif %}</td>
+            <td>{{ g.fecha_modificacion|fecha }}{% if g.ingeniero %}<br><small>{{ g.ingeniero }}</small>{% endif %}</td>
+            <td class="derecha"><a href="{{ url_for('ingeniero.granulo_editar', id_granulo=g.id_granulo) }}">Editar<span class="oculto"> {{ g.regla }}</span></a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  {% else %}
+  <section class="vacio">
+    <h2>Este programa no tiene gránulos</h2>
+    <p>Sin gránulos, el motor nunca lo propondrá. Agregue al menos uno para que participe en la inferencia.</p>
+    <a class="boton boton-principal" href="{{ url_for('ingeniero.granulo_nuevo') }}">Agregar gránulo</a>
+  </section>
+  {% endfor %}
+</div>
+{% endblock %}

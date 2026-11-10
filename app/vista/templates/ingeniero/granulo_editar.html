@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% import "componentes/macros.html" as m with context %}
+{% block titulo %}Editar {{ granulo.regla }}{% endblock %}
+{% block contenido %}
+<div class="pagina pagina-estrecha">
+  <nav class="migas" aria-label="Ruta">
+    <a href="{{ url_for('ingeniero.granulos', hipotesis=granulo.hipotesis) }}">Gránulos de {{ granulo.programa_academico }}</a>
+    <span aria-hidden="true">/</span><span aria-current="page">{{ granulo.regla }}</span>
+  </nav>
+  <header class="pagina-encabezado">
+    <h1>Editar {{ granulo.regla }}</h1>
+    <p class="entrada">Si el aspirante tiene <strong>{{ granulo.variable }}: {{ granulo.valor_hecho|lower }}</strong>,
+      el programa <strong>{{ granulo.programa_academico }}</strong> suma el peso indicado.</p>
+  </header>
+
+  <form class="formulario" method="post" action="{{ url_for('ingeniero.granulo_guardar', id_granulo=granulo.id_granulo) }}" novalidate>
+    {{ m.csrf() }}
+    {{ m.campo('peso', 'Peso', peso|num if peso is number else peso, errores.get('peso'), ayuda='Entre 0,00 y 1,00.', extra='inputmode="decimal"') }}
+    <div class="campo">
+      <label class="interruptor">
+        <input type="checkbox" name="activo" value="1" {% if granulo.activo %}checked{% endif %}>
+        <span>Gránulo activo</span>
+      </label>
+      <p class="campo-ayuda">Si lo desactiva, el motor deja de usarlo. Las evaluaciones ya guardadas no cambian.</p>
+    </div>
+    <div class="acciones">
+      <button class="boton boton-principal" type="submit">Guardar cambios</button>
+      <a class="boton boton-texto" href="{{ url_for('ingeniero.granulos', hipotesis=granulo.hipotesis) }}">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

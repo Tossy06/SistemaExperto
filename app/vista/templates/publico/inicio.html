@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% import "componentes/macros.html" as m with context %}
+{% block titulo %}Bienvenida{% endblock %}
+{% block clase_body %}pagina-inicio{% endblock %}
+{% block contenido %}
+<div class="inicio">
+  <section class="inicio-presentacion" aria-labelledby="titulo-inicio">
+    <h1 id="titulo-inicio">¿Qué carrera encaja con usted?</h1>
+    <p class="entrada">Responda 11 preguntas sobre sus notas, sus intereses y su forma de trabajar.
+      El sistema compara sus respuestas con el conocimiento de orientadores y le muestra los cinco
+      programas con los que tiene más afinidad.</p>
+
+    <figure class="muestra">
+      <figcaption>Así se ve un resultado</figcaption>
+      <p class="muestra-primero"><span class="resaltado">Ingeniería de Software</span></p>
+      <p class="muestra-dato">15,63 % de afinidad, el valor más alto entre 24 programas</p>
+      {% set ejemplo = [
+        {'codigo': 'H02', 'programa_academico': 'Ingeniería de Sistemas', 'probabilidad': 12.5},
+        {'codigo': 'H03', 'programa_academico': 'Ingeniería Mecánica', 'probabilidad': 9.375},
+        {'codigo': 'H05', 'programa_academico': 'Estadística', 'probabilidad': 9.375},
+        {'codigo': 'H07', 'programa_academico': 'Biología', 'probabilidad': 9.375}] %}
+      {{ m.ranking(ejemplo, 15.625, 2) }}
+    </figure>
+
+    <div class="necesita">
+      <h2>Tenga a mano</h2>
+      <ul>
+        <li>Su promedio de notas en cuatro áreas: lógico-matemática, científica, social-humanística y administrativa.</li>
+        <li>Los porcentajes de su test de intereses RIASEC (realista, investigativo, artístico, social, emprendedor y convencional).</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="acceso" aria-label="Acceso">
+    <div class="pestanas" role="tablist" data-pestanas>
+      <a role="tab" id="tab-ingresar" href="?pestana=ingresar" aria-controls="panel-ingresar"
+         aria-selected="{{ 'true' if pestana != 'registro' else 'false' }}">Ingresar</a>
+      <a role="tab" id="tab-registro" href="?pestana=registro" aria-controls="panel-registro"
+         aria-selected="{{ 'true' if pestana == 'registro' else 'false' }}">Crear cuenta</a>
+    </div>
+
+    <form class="formulario" id="panel-ingresar" role="tabpanel" aria-labelledby="tab-ingresar" method="post"
+          action="{{ url_for('publico.ingresar', siguiente=request.args.get('siguiente')) }}" {% if pestana == 'registro' %}hidden{% endif %}>
+      {{ m.csrf() }}
+      <fieldset class="selector-rol">
+        <legend>Ingreso como</legend>
+        {% set rol = datos.get('rol', 'aspirante') %}
+        <label><input type="radio" name="rol" value="aspirante" {% if rol == 'aspirante' %}checked{% endif %}> Aspirante</label>
+        <label><input type="radio" name="rol" value="ingeniero" {% if rol == 'ingeniero' %}checked{% endif %}> Ingeniero del conocimiento</label>
+      </fieldset>
+      {{ m.campo('correo', 'Correo', datos.get('correo', ''), tipo='email', autocompletar='email', extra='required', prefijo='ingreso') }}
+      {{ m.campo('contrasena', 'Contraseña', tipo='password', autocompletar='current-password', extra='required', prefijo='ingreso') }}
+      <button class="boton boton-principal boton-ancho" type="submit">Ingresar</button>
+      <details class="cuentas-prueba">
+        <summary>Cuentas de prueba</summary>
+        <dl>
+          <dt>Aspirante</dt><dd>laura.martinez@correo.com <br>Aspirante2026*</dd>
+          <dt>Ingeniero del conocimiento</dt><dd>ingeniero.conocimiento@umb.edu.co <br>Ingeniero2026*</dd>
+        </dl>
+      </details>
+    </form>
+
+    <form class="formulario" id="panel-registro" role="tabpanel" aria-labelledby="tab-registro" method="post"
+          action="{{ url_for('publico.registro') }}" {% if pestana != 'registro' %}hidden{% endif %} novalidate>
+      {{ m.csrf() }}
+      <p class="formulario-intro">La cuenta guarda sus evaluaciones para que pueda consultarlas después.</p>
+      {{ m.campo('documento', 'Documento de identidad', datos.get('documento', ''), errores.get('documento'), autocompletar='off', extra='inputmode="numeric"') }}
+      <div class="campos-dobles">
+        {{ m.campo('nombres', 'Nombres', datos.get('nombres', ''), errores.get('nombres'), autocompletar='given-name') }}
+        {{ m.campo('apellidos', 'Apellidos', datos.get('apellidos', ''), errores.get('apellidos'), autocompletar='family-name') }}
+      </div>
+      {{ m.campo('correo', 'Correo', datos.get('correo', ''), errores.get('correo'), tipo='email', autocompletar='email') }}
+      {{ m.campo('contrasena', 'Contraseña', '', errores.get('contrasena'), tipo='password', ayuda='Mínimo 8 caracteres.', autocompletar='new-password') }}
+      <button class="boton boton-principal boton-ancho" type="submit">Crear cuenta</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

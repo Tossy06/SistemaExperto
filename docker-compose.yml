@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: postgres-local
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: sistema_experto_orientacion
+    ports:
+      - "5439:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Solo se ejecutan la primera vez (cuando el volumen está vacío)
+      - ./bd:/docker-entrypoint-initdb.d:ro
+    restart: unless-stopped
+
+volumes:
+  pgdata:

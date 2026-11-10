@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% import "componentes/macros.html" as m with context %}
+{% block titulo %}Evaluaciones{% endblock %}
+{% block contenido %}
+<div class="pagina">
+  <header class="pagina-encabezado">
+    <h1>Evaluaciones</h1>
+    <p class="entrada">Todas las evaluaciones guardadas, de la más reciente a la más antigua.</p>
+  </header>
+
+  <form class="filtro" method="get" action="{{ url_for('ingeniero.evaluaciones') }}" role="search">
+    <label for="filtro-q">Buscar aspirante</label>
+    <input id="filtro-q" type="search" name="q" value="{{ q }}" placeholder="Nombre o documento">
+    <button class="boton boton-secundario" type="submit">Buscar</button>
+    {% if q %}<a href="{{ url_for('ingeniero.evaluaciones') }}">Quitar búsqueda</a>{% endif %}
+    <p class="filtro-total" role="status">{{ evaluaciones|length }} evaluaciones</p>
+  </form>
+
+  {% if evaluaciones %}
+  <div class="tabla-marco">
+    <table class="tabla">
+      <thead><tr><th scope="col">N.º</th><th scope="col">Fecha</th><th scope="col">Aspirante</th><th scope="col">Documento</th>
+        <th scope="col">Programa con mayor afinidad</th><th scope="col" class="derecha">Afinidad</th><th scope="col">Estado</th>
+        <th scope="col"><span class="oculto">Acciones</span></th></tr></thead>
+      <tbody>
+        {% for e in evaluaciones %}
+        <tr>
+          <td>{{ e.id_evaluacion }}</td><td>{{ e.fecha_evaluacion|fecha }}</td><td>{{ e.aspirante }}</td>
+          <td class="cifra">{{ e.documento }}</td><td>{{ e.programa_primera }}</td>
+          <td class="derecha cifra">{{ e.probabilidad_primera|pct }}</td>
+          <td>{{ m.estado_evaluacion(e.resultado_no_concluyente) }}</td>
+          <td class="derecha"><a href="{{ url_for('ingeniero.evaluacion', id_evaluacion=e.id_evaluacion) }}">Ver detalle<span class="oculto"> de la evaluación {{ e.id_evaluacion }}</span></a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <section class="vacio">
+    <h2>{{ 'Ninguna evaluación coincide con «' ~ q ~ '»' if q else 'Aún no hay evaluaciones' }}</h2>
+    <p>{{ 'Pruebe con otra parte del nombre o con el documento completo.' if q else 'Las evaluaciones aparecerán aquí cuando los aspirantes respondan el cuestionario.' }}</p>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

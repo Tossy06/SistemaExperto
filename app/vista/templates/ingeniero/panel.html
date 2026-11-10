@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block titulo %}Panel del ingeniero{% endblock %}
+{% block contenido %}
+<div class="pagina">
+  <header class="pagina-encabezado">
+    <h1>Base de conocimiento</h1>
+    <p class="entrada">Revise cómo está cargado el conocimiento del experto y qué resultados está produciendo.</p>
+  </header>
+
+  <dl class="cifras">
+    <div><dt>Programas académicos</dt><dd>{{ resumen.hipotesis }}</dd></div>
+    <div><dt>Gránulos activos</dt><dd>{{ resumen.granulos }}</dd></div>
+    <div><dt>Aspirantes registrados</dt><dd>{{ resumen.aspirantes }}</dd></div>
+    <div><dt>Evaluaciones realizadas</dt><dd>{{ resumen.evaluaciones }}</dd></div>
+  </dl>
+
+  <div class="panel-columnas">
+    <section aria-labelledby="titulo-frecuentes">
+      <h2 id="titulo-frecuentes">Programas que más salen en primer lugar</h2>
+      {% if resumen.frecuentes %}
+        {% set mayor = resumen.frecuentes[0].veces %}
+        <ol class="ranking ranking-conteo">
+          {% for f in resumen.frecuentes %}
+          <li class="ranking-fila" style="--proporcion: {{ f.veces / mayor }}">
+            <span class="ranking-posicion" aria-hidden="true">{{ loop.index }}</span>
+            <span class="ranking-programa">{{ f.programa_academico }} <span class="codigo">{{ f.codigo }}</span></span>
+            <span class="ranking-barra" aria-hidden="true"><span></span></span>
+            <span class="ranking-valor">{{ f.veces }} {{ 'vez' if f.veces == 1 else 'veces' }}</span>
+          </li>
+          {% endfor %}
+        </ol>
+        <p><a href="{{ url_for('ingeniero.evaluaciones') }}">Ver todas las evaluaciones</a></p>
+      {% else %}
+        <p class="nota">Aún no hay evaluaciones. Aparecerán aquí cuando los aspirantes respondan el cuestionario.</p>
+      {% endif %}
+    </section>
+
+    <section aria-labelledby="titulo-cobertura">
+      <h2 id="titulo-cobertura">Cobertura por programa</h2>
+      <p class="nota">Un programa con pocos gránulos o poco peso máximo rara vez aparecerá en los resultados.</p>
+      <div class="tabla-marco tabla-alta">
+        <table class="tabla tabla-compacta">
+          <thead><tr><th scope="col">Programa</th><th scope="col" class="derecha">Gránulos</th><th scope="col" class="derecha">Peso máximo</th></tr></thead>
+          <tbody>
+            {% for h in resumen.por_hipotesis %}
+            <tr>
+              <td><a href="{{ url_for('ingeniero.granulos', hipotesis=h.hipotesis) }}">{{ h.programa_academico }}</a> <span class="codigo">{{ h.hipotesis }}</span></td>
+              <td class="derecha cifra">{{ h.numero_granulos }}</td>
+              <td class="derecha cifra">{{ h.peso_maximo|num }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}
