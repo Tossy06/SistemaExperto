@@ -1,7 +1,7 @@
 # Diseño de la interfaz
 
 La interfaz se diseñó con la skill oficial **frontend-design** de Anthropic
-(<https://github.com/anthropics/skills/tree/main/skills/frontend-design>), instalada en `.claude/skills/frontend-design`.
+(<https://github.com/anthropics/skills/tree/main/skills/frontend-design>), instalada localmente en `.claude/skills/frontend-design` (esa carpeta no se sube al repositorio).
 
 ## Tema, público y tarea principal
 
