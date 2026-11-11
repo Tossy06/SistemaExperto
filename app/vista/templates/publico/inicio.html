@@ -6,27 +6,27 @@
 <div class="inicio">
   <section class="inicio-presentacion" aria-labelledby="titulo-inicio">
     <h1 id="titulo-inicio">¿Qué carrera encaja con usted?</h1>
-    <p class="entrada">Responda 11 preguntas sobre sus notas, sus intereses y su forma de trabajar.
-      El sistema compara sus respuestas con el conocimiento de orientadores y le muestra los cinco
-      programas con los que tiene más afinidad.</p>
+    <p class="entrada">Responda 23 preguntas sobre sus notas, sus intereses y su forma de trabajar.
+      El sistema compara su perfil con una base de conocimiento de orientación vocacional y le muestra los cinco
+      programas con mayor probabilidad.</p>
 
     <figure class="muestra">
       <figcaption>Así se ve un resultado</figcaption>
       <p class="muestra-primero"><span class="resaltado">Ingeniería de Software</span></p>
-      <p class="muestra-dato">15,63 % de afinidad, el valor más alto entre 24 programas</p>
+      <p class="muestra-dato">25,10 % de probabilidad entre las cinco hipótesis y 90,6 % de coincidencia con el perfil</p>
       {% set ejemplo = [
-        {'codigo': 'H02', 'programa_academico': 'Ingeniería de Sistemas', 'probabilidad': 12.5},
-        {'codigo': 'H03', 'programa_academico': 'Ingeniería Mecánica', 'probabilidad': 9.375},
-        {'codigo': 'H05', 'programa_academico': 'Estadística', 'probabilidad': 9.375},
-        {'codigo': 'H07', 'programa_academico': 'Biología', 'probabilidad': 9.375}] %}
-      {{ m.ranking(ejemplo, 15.625, 2) }}
+        {'codigo': 'H03', 'programa_academico': 'Ingeniería Mecánica', 'probabilidad': 20.5916},
+        {'codigo': 'H02', 'programa_academico': 'Ingeniería de Sistemas', 'probabilidad': 19.5641},
+        {'codigo': 'H07', 'programa_academico': 'Biología', 'probabilidad': 19.2317},
+        {'codigo': 'H05', 'programa_academico': 'Estadística', 'probabilidad': 15.5095}] %}
+      {{ m.ranking(ejemplo, 25.1032, 2) }}
     </figure>
 
     <div class="necesita">
       <h2>Tenga a mano</h2>
       <ul>
         <li>Su promedio de notas en cuatro áreas: lógico-matemática, científica, social-humanística y administrativa.</li>
-        <li>Los porcentajes de su test de intereses RIASEC (realista, investigativo, artístico, social, emprendedor y convencional).</li>
+        <li>Unos diez minutos para marcar cuánto le gustan 18 actividades (intereses RIASEC) y cómo prefiere trabajar.</li>
       </ul>
     </div>
   </section>

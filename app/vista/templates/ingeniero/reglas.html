@@ -4,7 +4,8 @@
 <div class="pagina">
   <header class="pagina-encabezado">
     <h1>Reglas y rangos</h1>
-    <p class="entrada">Cómo el sistema convierte cada respuesta en un dato del perfil y cuándo marca un resultado como no concluyente.</p>
+    <p class="entrada">Cómo el sistema convierte las respuestas en datos del perfil y cuándo marca un resultado como no concluyente.
+      Las notas y el estilo se clasifican por el promedio de sus preguntas; los intereses, por el lugar que ocupan frente a los demás.</p>
   </header>
 
   <section aria-labelledby="titulo-rn">
@@ -15,7 +16,9 @@
         <tbody>
           {% for r in reglas %}
           <tr><td class="codigo">{{ r.codigo_regla }}</td><td>{{ r.descripcion }}</td>
-            <td>Datos de tipo {{ r.tipo_variable|lower }} con valor {{ r.valor_hecho|lower }} {{ '=' if r.operador == '=' else '≥' }} {{ r.cantidad }}</td></tr>
+            <td>{% set simbolo = {'=': '=', '>=': '≥', '<': '<'}[r.operador] %}
+              {% if r.metrica == 'CONTEO_HECHOS' %}Datos de tipo {{ r.tipo_variable|lower }} con valor {{ r.valor_hecho|lower }} {{ simbolo }} {{ r.umbral|int }}
+              {% else %}Coincidencia del programa de primer lugar {{ simbolo }} {{ r.umbral|num }}{% endif %}</td></tr>
           {% endfor %}
         </tbody>
       </table>
@@ -30,8 +33,9 @@
         <h3>{{ variable }}</h3>
         <ul>
           {% for h in hechos %}
-          <li><span class="nivel nivel-{{ h.valor_clasificado|lower }}">{{ h.valor_clasificado }}</span>
-            {% if h.rango_minimo is not none %}<span class="cifra">{{ h.rango_minimo|num }} a {{ h.rango_maximo|num }}</span>{% else %}<span>opción</span>{% endif %}
+          <li><span class="nivel nivel-{{ h.valor_clasificado|clase }}">{{ h.valor_clasificado }}</span>
+            {% if h.criterio_clasificacion == 'POSICION' %}<span class="cifra">{% if h.rango_minimo == h.rango_maximo %}lugar {{ h.rango_minimo|int }}{% else %}lugares {{ h.rango_minimo|int }} a {{ h.rango_maximo|int }}{% endif %}</span>
+            {% else %}<span class="cifra">{{ h.rango_minimo|num }} a {{ h.rango_maximo|num }}</span>{% endif %}
             <span class="codigo">{{ h.codigo }}</span></li>
           {% endfor %}
         </ul>

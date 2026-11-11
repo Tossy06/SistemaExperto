@@ -7,17 +7,17 @@
   <section class="vacio">
     <h1>Hola, {{ usuario.nombres }}</h1>
     <p class="entrada">Todavía no tiene evaluaciones. El cuestionario toma unos cinco minutos y
-      al terminar verá sus cinco programas con mayor afinidad.</p>
-    <p>Antes de empezar, tenga a mano su promedio de notas por área y los porcentajes de su test RIASEC.</p>
+      al terminar verá sus cinco programas con mayor probabilidad.</p>
+    <p>Antes de empezar, tenga a mano su promedio de notas por área. Los intereses se responden en el mismo cuestionario.</p>
     <a class="boton boton-principal" href="{{ url_for('aspirante.cuestionario') }}">Responder el cuestionario</a>
   </section>
   {% else %}
   {% set ultima = evaluaciones[0] %}
   <section class="ultimo-resultado" aria-labelledby="titulo-ultimo">
     <h1 id="titulo-ultimo">Hola, {{ usuario.nombres }}</h1>
-    <p class="entrada">En su evaluación más reciente, del {{ ultima.fecha_evaluacion|fecha }}, el programa con mayor afinidad fue</p>
+    <p class="entrada">En su evaluación más reciente, del {{ ultima.fecha_evaluacion|fecha }}, el programa con mayor probabilidad fue</p>
     <p class="programa-destacado"><span class="resaltado">{{ ultima.programa_primera }}</span></p>
-    <p class="dato-destacado">{{ ultima.probabilidad_primera|pct }} de afinidad
+    <p class="dato-destacado">{{ ultima.probabilidad_primera|pct }} de probabilidad entre las cinco hipótesis y {{ ultima.coincidencia_primera|pct1 }} de coincidencia
       {% if ultima.resultado_no_concluyente %}. Este resultado quedó marcado como no concluyente.{% endif %}</p>
     <div class="acciones">
       <a class="boton boton-principal" href="{{ url_for('aspirante.evaluacion', id_evaluacion=ultima.id_evaluacion) }}">Ver el resultado completo</a>
@@ -30,8 +30,8 @@
     <p class="nota">Cada evaluación queda guardada tal como se calculó y no se puede modificar.</p>
     <div class="tabla-marco">
       <table class="tabla">
-        <thead><tr><th scope="col">N.º</th><th scope="col">Fecha</th><th scope="col">Programa con mayor afinidad</th>
-          <th scope="col" class="derecha">Afinidad</th><th scope="col">Estado</th><th scope="col"><span class="oculto">Acciones</span></th></tr></thead>
+        <thead><tr><th scope="col">N.º</th><th scope="col">Fecha</th><th scope="col">Programa con mayor probabilidad</th>
+          <th scope="col" class="derecha">Probabilidad</th><th scope="col" class="derecha">Coincidencia</th><th scope="col">Estado</th><th scope="col"><span class="oculto">Acciones</span></th></tr></thead>
         <tbody>
         {% for e in evaluaciones %}
           <tr>
@@ -39,6 +39,7 @@
             <td>{{ e.fecha_evaluacion|fecha }}</td>
             <td>{{ e.programa_primera }}</td>
             <td class="derecha cifra">{{ e.probabilidad_primera|pct }}</td>
+            <td class="derecha cifra">{{ e.coincidencia_primera|pct1 }}</td>
             <td>{{ m.estado_evaluacion(e.resultado_no_concluyente) }}</td>
             <td class="derecha"><a href="{{ url_for('aspirante.evaluacion', id_evaluacion=e.id_evaluacion) }}">Ver detalle<span class="oculto"> de la evaluación {{ e.id_evaluacion }}</span></a></td>
           </tr>

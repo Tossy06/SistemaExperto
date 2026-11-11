@@ -8,30 +8,24 @@
 {% set pasos = [
   ('AREA', 'Desempeño académico', 'Su desempeño académico',
    'Indica en qué áreas del conocimiento le va mejor en el colegio. No se pregunta asignatura por asignatura: las notas se agrupan en cuatro áreas.',
-   'Escriba el promedio de sus notas en las asignaturas de cada área, en la escala de 1,0 a 5,0 (con un decimal).'),
+   'Escriba el promedio de sus notas en las asignaturas de cada área, en la escala de 1,0 a 5,0.'),
   ('INTERES', 'Intereses', 'Sus intereses vocacionales',
-   'Indica qué tipo de actividades le atraen, según el test RIASEC de Holland, que mide la afinidad con seis tipos de actividades.',
-   'Copie el porcentaje que obtuvo en cada categoría del test: puntaje de la categoría dividido entre el puntaje máximo de esa categoría, por 100. Por ejemplo, 24 de 30 puntos es 80 %.'),
+   'Indica qué tipo de actividades le atraen. Son 18 actividades, tres por cada uno de los seis tipos del modelo RIASEC de Holland. Con el promedio de cada tipo, el sistema los ordena: el de mayor promedio es su primera preferencia, el siguiente la segunda y así sucesivamente (código Holland).',
+   'Marque cuánto le gustaría hacer cada actividad, de 1 (me desagrada mucho) a 5 (me gusta mucho). No piense en si sabe hacerla, sino en si la disfrutaría.'),
   ('ESTILO', 'Estilo de trabajo', 'Su forma de trabajar',
    'Ayuda a distinguir entre programas que comparten área e interés: unos son más afines al trabajo autónomo y otros al trabajo colaborativo.',
-   'Elija la opción con la que se siente más cómodo(a). No hay una respuesta mejor que otra.')] %}
+   'Marque el punto de la escala con el que se siente más cómodo(a). No hay una respuesta mejor que otra.')] %}
 {% set descripciones = {
   'DES-LM': 'Matemáticas: aritmética, álgebra, geometría, trigonometría, cálculo y estadística.',
   'DES-CI': 'Ciencias naturales: biología, química y física, y los trabajos de laboratorio.',
   'DES-SH': 'Lengua castellana, ciencias sociales, historia, filosofía, ética e idiomas.',
-  'DES-AF': 'Contabilidad, economía, emprendimiento o gestión empresarial. Si su colegio no las dicta, use las más cercanas, como ciencias económicas y políticas.',
-  'INT-R': 'Actividades prácticas y concretas: usar herramientas y máquinas, construir, reparar o trabajar al aire libre.',
-  'INT-I': 'Observar, analizar y resolver problemas: investigar, experimentar y entender cómo funcionan las cosas.',
-  'INT-A': 'Crear y expresarse: diseño, dibujo, música, escritura o artes escénicas, con libertad para proponer.',
-  'INT-S': 'Ayudar, enseñar, cuidar u orientar a otras personas.',
-  'INT-E': 'Liderar, convencer y tomar decisiones: dirigir proyectos, negociar o vender.',
-  'INT-C': 'Organizar datos y seguir procedimientos: registros, cifras, archivos, orden y precisión.'} %}
+  'DES-AF': 'Contabilidad, economía, emprendimiento o gestión empresarial. Si su colegio no las dicta, use las más cercanas, como ciencias económicas y políticas.'} %}
 {% set total = preguntas|length %}
 <div class="pagina">
   <header class="pagina-encabezado">
     <h1>Cuestionario vocacional</h1>
-    <p class="entrada">Son {{ total }} preguntas en tres bloques. Todas son obligatorias. Mientras responde,
-      verá cómo el sistema clasifica cada valor.</p>
+    <p class="entrada">Son {{ total }} preguntas en tres bloques. Todas son obligatorias y toman unos diez minutos.
+      Mientras responde, verá cómo el sistema clasifica cada dato.</p>
   </header>
 
   <form class="cuestionario" method="post" action="{{ url_for('aspirante.evaluar') }}" novalidate
@@ -39,6 +33,7 @@
     {{ m.csrf() }}
     <script type="application/json" id="rangos-clasificacion">{{ rangos|tojson }}</script>
     <script type="application/json" id="respuestas-ejemplo">{{ ejemplo|tojson }}</script>
+    <script type="application/json" id="nombres-variables">{{ nombres|tojson }}</script>
 
     <div class="cuestionario-pasos">
     {% for tipo, corto, titulo, significado, ayuda in pasos %}
@@ -49,73 +44,78 @@
         <div class="paso-intro">
           <p class="paso-significado"><strong>¿Qué mide?</strong> {{ significado }}</p>
           <p class="paso-ayuda" id="ayuda-{{ tipo }}"><strong>¿Qué escribo?</strong> {{ ayuda }}</p>
-          {% set primera = del_paso|selectattr('tipo_respuesta', 'equalto', 'NUMERICA')|first %}
-          {% if primera and rangos.get(primera.codigo_variable) %}
-          {% set niveles = rangos[primera.codigo_variable]|sort(attribute='minimo', reverse=true) %}
-          {% set dec = 1 if primera.valor_maximo <= 10 else 0 %}
-          {% set unidad = ' %' if primera.valor_maximo == 100 else '' %}
+          {% set variable = rangos.get(del_paso[0].codigo_variable) if del_paso else None %}
+          {% if variable and variable.criterio == 'RANGO' %}
+          {% set niveles = variable.rangos|sort(attribute='minimo', reverse=true) %}
           <p class="paso-escala"><strong>¿Cómo se clasifica?</strong>
-            {% for n in niveles %}<span class="escala-tramo"><span class="nivel nivel-{{ n.valor|lower }}">{{ n.valor }}</span>
-              {% if loop.last %}por debajo de {{ niveles[loop.index0 - 1].minimo|num(dec) }}{{ unidad }}{% else %}desde {{ n.minimo|num(dec) }}{{ unidad }}{% endif %}</span>{% endfor %}
+            {% for n in niveles %}<span class="escala-tramo"><span class="nivel nivel-{{ n.valor|clase }}">{{ n.valor }}</span>
+              {{ n.minimo|num }} a {{ n.maximo|num }}</span>{% endfor %}
+          </p>
+          {% elif variable %}
+          <p class="paso-escala"><strong>¿Cómo se clasifica?</strong>
+            {% for n in variable.rangos %}<span class="escala-tramo"><span class="nivel nivel-{{ n.valor|clase }}">{{ n.valor }}</span>
+              {% if n.minimo == n.maximo %}lugar {{ n.minimo|int }}{% else %}lugares {{ n.minimo|int }} a {{ n.maximo|int }}{% endif %}</span>{% endfor %}
           </p>
           {% endif %}
         </div>
 
         {% for p in del_paso %}
-          {% set error = errores.get(p.codigo_variable) %}
-          {% set valor = valores.get(p.codigo_variable, '') %}
+          {% set error = errores.get(p.codigo) %}
+          {% set valor = valores.get(p.codigo, '') %}
           {% if p.tipo_respuesta == 'NUMERICA' %}
-          <div class="pregunta{% if error %} campo-con-error{% endif %}" data-pregunta="{{ p.codigo_variable }}"
-               data-nombre="{{ p.nombre_variable | replace('Desempeño ', '') | replace('Interés ', '') }}"
-               data-minimo="{{ p.valor_minimo|float }}" data-maximo="{{ p.valor_maximo|float }}">
+          {% set nombre = p.nombre_variable | replace('Desempeño ', '') %}
+          <div class="pregunta{% if error %} campo-con-error{% endif %}" data-pregunta="{{ p.codigo }}" data-variable="{{ p.codigo_variable }}"
+               data-nombre="{{ nombre }}" data-minimo="{{ p.valor_minimo|float }}" data-maximo="{{ p.valor_maximo|float }}">
             <div class="pregunta-texto">
-              <label for="p-{{ p.codigo_variable }}">{{ p.nombre_variable | replace('Desempeño ', '') | replace('Interés ', '') }}</label>
-              <p class="pregunta-descripcion" id="p-{{ p.codigo_variable }}-descripcion">{{ descripciones.get(p.codigo_variable, '') }}</p>
-              <p class="campo-ayuda" id="p-{{ p.codigo_variable }}-ayuda">{{ p.enunciado }}</p>
+              <label for="p-{{ p.codigo }}">{{ nombre }}</label>
+              <p class="pregunta-descripcion" id="p-{{ p.codigo }}-descripcion">{{ descripciones.get(p.codigo_variable, '') }}</p>
+              <p class="campo-ayuda" id="p-{{ p.codigo }}-ayuda">{{ p.enunciado }}</p>
             </div>
             <div class="pregunta-control">
-              {% set paso = '0.1' if p.valor_maximo <= 10 else '1' %}
-              <input type="range" class="deslizador" min="{{ p.valor_minimo|float }}" max="{{ p.valor_maximo|float }}" step="{{ paso }}"
+              <input type="range" class="deslizador" min="{{ p.valor_minimo|float }}" max="{{ p.valor_maximo|float }}" step="0.1"
                      value="{{ valor|replace(',', '.') if valor else ((p.valor_minimo + p.valor_maximo) / 2)|float }}"
                      aria-label="{{ p.nombre_variable }}, deslizador" tabindex="-1" {% if not valor %}data-vacio{% endif %}>
-              {% set porcentaje = p.valor_minimo == 0 and p.valor_maximo == 100 %}
-              <span class="campo-valor{% if porcentaje %} campo-porcentaje{% endif %}">
-              <input id="p-{{ p.codigo_variable }}" name="{{ p.codigo_variable }}" class="valor-numerico" type="text"
+              <span class="campo-valor">
+              <input id="p-{{ p.codigo }}" name="{{ p.codigo }}" class="valor-numerico" type="text"
                      inputmode="decimal" value="{{ valor }}" autocomplete="off"
-                     placeholder="{{ p.valor_minimo|num(1 if paso == '0.1' else 0) }}–{{ p.valor_maximo|num(1 if paso == '0.1' else 0) }}"
-                     aria-describedby="p-{{ p.codigo_variable }}-descripcion p-{{ p.codigo_variable }}-ayuda p-{{ p.codigo_variable }}-clase p-{{ p.codigo_variable }}-error"
+                     placeholder="{{ p.valor_minimo|num(1) }}–{{ p.valor_maximo|num(1) }}"
+                     aria-describedby="p-{{ p.codigo }}-descripcion p-{{ p.codigo }}-ayuda p-{{ p.codigo }}-clase p-{{ p.codigo }}-error"
                      {% if error %}aria-invalid="true"{% endif %}>
-              {% if porcentaje %}<span class="unidad" aria-hidden="true">%</span>{% endif %}
               </span>
-              <output class="clasificacion" id="p-{{ p.codigo_variable }}-clase" aria-live="polite"></output>
+              <output class="clasificacion" id="p-{{ p.codigo }}-clase" aria-live="polite"></output>
             </div>
-            <p class="campo-error" id="p-{{ p.codigo_variable }}-error" {% if not error %}hidden{% endif %}>{{ error or '' }}</p>
+            <p class="campo-error" id="p-{{ p.codigo }}-error" {% if not error %}hidden{% endif %}>{{ error or '' }}</p>
           </div>
           {% else %}
-          <div class="pregunta pregunta-opciones{% if error %} campo-con-error{% endif %}" data-pregunta="{{ p.codigo_variable }}" data-nombre="{{ p.nombre_variable }}" role="radiogroup"
-               aria-labelledby="p-{{ p.codigo_variable }}-titulo">
-            <p class="pregunta-titulo" id="p-{{ p.codigo_variable }}-titulo">{{ p.enunciado }}</p>
-            <div class="opciones">
-              {% for opcion in p.opciones %}
-              <label class="opcion">
-                <input type="radio" name="{{ p.codigo_variable }}" value="{{ opcion }}" {% if valor == opcion %}checked{% endif %}>
-                <span class="opcion-nombre">{{ opcion }}</span>
-                <span class="opcion-detalle">{{ {'Independiente': 'Me concentro mejor trabajando por mi cuenta: organizo mis tiempos, investigo y resuelvo solo(a).',
-                                                 'Equipo': 'Disfruto construir ideas con otras personas: reparto tareas, converso y acuerdo decisiones.'}.get(opcion, '') }}</span>
-              </label>
+          {# Escala de 1 a 5: un grupo de botones de opción con los textos de los extremos. #}
+          <div class="pregunta pregunta-escala{% if error %} campo-con-error{% endif %}" data-pregunta="{{ p.codigo }}"
+               data-variable="{{ p.codigo_variable }}" data-nombre="{{ p.enunciado }}" role="radiogroup"
+               aria-labelledby="p-{{ p.codigo }}-titulo" aria-describedby="p-{{ p.codigo }}-extremos">
+            <p class="pregunta-titulo" id="p-{{ p.codigo }}-titulo">{{ p.enunciado }}</p>
+            <div class="escala">
+              <span class="escala-extremo" aria-hidden="true">{{ p.etiqueta_minima }}</span>
+              <span class="escala-puntos">
+              {% for punto in range(p.valor_minimo|int, p.valor_maximo|int + 1) %}
+                <label class="escala-punto">
+                  <input type="radio" name="{{ p.codigo }}" value="{{ punto }}" {% if valor|string == punto|string %}checked{% endif %}>
+                  <span>{{ punto }}</span>
+                </label>
               {% endfor %}
+              </span>
+              <span class="escala-extremo" aria-hidden="true">{{ p.etiqueta_maxima }}</span>
             </div>
+            <p class="oculto" id="p-{{ p.codigo }}-extremos">{{ p.valor_minimo|int }}: {{ p.etiqueta_minima }}. {{ p.valor_maximo|int }}: {{ p.etiqueta_maxima }}.</p>
+            {% if p.tipo_variable != 'INTERES' %}<output class="clasificacion clasificacion-escala" aria-live="polite"></output>{% endif %}
             <p class="campo-error" {% if not error %}hidden{% endif %}>{{ error or '' }}</p>
           </div>
           {% endif %}
         {% endfor %}
-        {% if del_paso|selectattr('valor_maximo', 'equalto', 100)|list|length > 1 %}
-        {# Aviso informativo (no bloquea el envío): valores muy bajos en todas las preguntas de porcentaje. #}
-        <p class="aviso-escala" data-aviso-escala role="status" hidden>
-          <strong>¿Usó otra escala?</strong> Todos los valores de este paso son menores que 5. Aquí se escribe el
-          <strong>porcentaje</strong> obtenido en el test (0 a 100); por ejemplo, 80 en lugar de 4. Si sus valores son
-          correctos, puede continuar.
-        </p>
+        {% if tipo == 'INTERES' %}
+        {# Vista previa del código Holland con los rangos de posición del modelo. La clasificación definitiva la hace el servidor. #}
+        <div class="holland" data-holland aria-live="polite">
+          <p class="holland-titulo"><strong>Su orden de preferencias</strong>: aparece cada tipo cuando responde sus tres actividades.</p>
+          <ol class="holland-lista"></ol>
+        </div>
         {% endif %}
         <div class="paso-navegacion" data-navegacion hidden>
           {% if not loop.first %}<button class="boton boton-secundario" type="button" data-anterior>Anterior</button>{% endif %}

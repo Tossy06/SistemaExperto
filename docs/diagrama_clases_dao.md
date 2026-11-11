@@ -49,7 +49,7 @@ classDiagram
         +activas() list~Pregunta~
     }
     class HechoDAO {
-        +derivar(respuesta) Hecho
+        +derivar(respuestas) tuple
         +listar() list
         +rangos_por_variable() dict
     }
@@ -59,6 +59,7 @@ classDiagram
     }
     class GranuloDAO {
         +por_hecho(id_hecho) list~Granulo~
+        +maximos_por_hipotesis() dict
         +listar(codigo_hipotesis) list
         +obtener(id_granulo) dict
         +resumen_por_hipotesis() list
@@ -93,7 +94,7 @@ classDiagram
     }
     class TablaContabilizacion {
         +registrar(granulo, hecho)
-        +calcular_probabilidades() list~ConteoHipotesis~
+        +calcular() list~ConteoHipotesis~
     }
     MotorInferencia --> HechoDAO
     MotorInferencia --> GranuloDAO

@@ -122,16 +122,16 @@ def casos_de_uso():
     s.texto(600, 46, "Sistema Experto de Apoyo a la Orientación Académica (aplicación web)", 15, "bold", "middle", AZUL)
     C = {  # codigo: (cx, cy)
         "CU-02": (600, 105), "CU-01": (380, 250), "CU-03": (380, 360), "CU-05": (380, 470), "CU-08": (380, 580),
-        "CU-04": (600, 430), "CU-06": (820, 250), "CU-07": (820, 360), "CU-09": (820, 470), "CU-10": (820, 580)}
+        "CU-04": (600, 430), "CU-06": (820, 250), "CU-09": (820, 360), "CU-10": (820, 470), "CU-07": (820, 580)}
     asp, ing, exp_ = (90, 280), (1110, 280), (1110, 590)
     # Asociaciones (se dibujan primero para quedar debajo de las elipses)
     for c in ("CU-01", "CU-03", "CU-05", "CU-08"):
-        s.linea([(asp[0] + 26, asp[1] + 30), C[c]], TINTA, 1.1)
+        s.linea([(asp[0] + 26, asp[1] + 30), (C[c][0] - 112, C[c][1])], TINTA, 1.1)   # al borde izquierdo
     for c in ("CU-06", "CU-07", "CU-09", "CU-10"):
-        s.linea([(ing[0] - 26, ing[1] + 30), C[c]], TINTA, 1.1)
+        s.linea([(ing[0] - 26, ing[1] + 30), (C[c][0] + 112, C[c][1])], TINTA, 1.1)   # al borde derecho
     s.linea([(asp[0] + 26, asp[1] + 30), (C["CU-02"][0] - 112, C["CU-02"][1])], TINTA, 1.1)
     s.linea([(ing[0] - 26, ing[1] + 30), (C["CU-02"][0] + 112, C["CU-02"][1])], TINTA, 1.1)
-    s.linea([(exp_[0] - 26, exp_[1] + 30), C["CU-07"]], GRIS, 1.1, "6 4")
+    s.linea([(exp_[0] - 26, exp_[1] + 30), (C["CU-07"][0] + 112, C["CU-07"][1])], GRIS, 1.1, "6 4")
     caso(s, *C["CU-02"], "CU-02", "Iniciar sesión")
     caso(s, *C["CU-01"], "CU-01", "Registrarse como\naspirante")
     caso(s, *C["CU-03"], "CU-03", "Responder el cuestionario\nde evaluación")
@@ -207,10 +207,10 @@ def clases_dao():
                "«fachada del modelo»", "app/modelo/sistema_experto.py", AZUL, AZUL_CLARO)
     hm = clase(s, 880, 20, 300, "MotorInferencia",
                ("-_hechos: HechoDAO", "-_granulos: GranuloDAO", "-_reglas: ReglaNoConcluyenteDAO"),
-               ("-_derivar(respuesta): Hecho", "+inferir(respuestas): ResultadoInferencia"),
+               ("+inferir(respuestas): ResultadoInferencia",),
                "«servicio»", "motor_inferencia.py", AMBAR, AMBAR_CLARO)
-    ht = clase(s, 880, 230, 300, "TablaContabilizacion", ("-_conteos: dict",),
-               ("+registrar(granulo, hecho)", "+calcular_probabilidades(): list"), "", "", AMBAR, AMBAR_CLARO)
+    ht = clase(s, 880, 230, 300, "TablaContabilizacion", ("-_filas: dict<id_hipotesis, ConteoHipotesis>", "-_maximos: dict"),
+               ("+registrar(granulo, hecho)  (peso × grado)", "+calcular(): list<ConteoHipotesis>"), "", "", AMBAR, AMBAR_CLARO)
     s.linea([(320, 40 + hc / 2), (400, 40 + hc / 2)], TINTA, 1.2, "6 4", "abierta")
     s.texto(360, 40 + hc / 2 - 6, "usa", 11, "normal", "middle", TINTA, "italic")
     s.linea([(800, 80), (880, 80)], TINTA, 1.2, None, None, "rombo")
@@ -220,9 +220,7 @@ def clases_dao():
 
     # Paquete DAO
     top = 400
-    s.rect(15, top, 1170, 590, "#FAFBFC", AZUL, 1.2, 4, "8 4")
-    s.rect(15, top - 24, 210, 24, AZUL_CLARO, AZUL, 1.2)
-    s.texto(26, top - 7, "paquete app.modelo.dao", 12, "bold", "start", AZUL)
+    inicio_paquete = len(s.p)   # el recuadro del paquete se inserta aquí al conocer su alto
     # composición fachada -> paquete
     s.linea([(600, 20 + hs), (600, top)], TINTA, 1.4, None, None, "rombo")
     s.texto(610, top - 12, "1 instancia de cada DAO (comparten la conexión de la petición)", 11, "normal", "start", TINTA, "italic")
@@ -254,13 +252,13 @@ def clases_dao():
     s.linea([(600, bus_a), (600, yb)], TINTA, 1.1, None, "herencia")
     fila_b = [
         ("HechoDAO", "conocimiento.hechos_perfil (RC)",
-         ("+derivar(respuesta): Hecho | None", "+listar(): list", "+rangos_por_variable(): dict")),
+         ("+derivar(respuestas): (hechos, sin_hecho)", "+listar(): list", "+rangos_por_variable(): dict")),
         ("GranuloDAO", "conocimiento.granulos_hecho_hipotesis (RG)",
-         ("+por_hecho(id_hecho): list<Granulo>", "+listar(codigo_hipotesis): list", "+obtener(id_granulo): dict",
+         ("+por_hecho(id_hecho): list<Granulo>", "+maximos_por_hipotesis(): dict", "+listar(codigo_hipotesis): list", "+obtener(id_granulo): dict",
           "+resumen_por_hipotesis(): list", "+contar_activos(): int", "+insertar(id_hecho, id_hip, peso, id_ing): str",
           "+actualizar(id_granulo, peso, activo, id_ing)")),
         ("ReglaNoConcluyenteDAO", "conocimiento.reglas_resultado_no_... (RN)", ("+activas(): list<ReglaNoConcluyente>",)),
-        ("EvaluacionDAO", "transaccional: 5 tablas de la evaluación",
+        ("EvaluacionDAO", "transaccional: 6 tablas de la evaluación",
          ("+insertar(id_asp, respuestas, resultado): int", "+listar_por_aspirante(id_aspirante): list",
           "+listar_todas(texto, limite): list", "+detalle(id_evaluacion): dict", "+contar(): int",
           "+programas_mas_frecuentes(limite): list")),
@@ -273,13 +271,21 @@ def clases_dao():
     s.linea([(xs[0] + w / 2, bus_b), (xs[-1] + w / 2, bus_b)], TINTA, 1.1)
     s.linea([(600, bus_b), (600, yb + hb)], TINTA, 1.1, None, "herencia")
 
+    # Recuadro del paquete: su alto depende de las clases que contiene (se dibuja debajo de ellas)
+    fondo = yb2 + max(alturas_b) + 25
+    contenido, s.p = s.p[inicio_paquete:], s.p[:inicio_paquete]
+    s.rect(15, top, 1170, fondo - top, "#FAFBFC", AZUL, 1.2, 4, "8 4")
+    s.rect(15, top - 24, 210, 24, AZUL_CLARO, AZUL, 1.2)
+    s.texto(26, top - 7, "paquete app.modelo.dao", 12, "bold", "start", AZUL)
+    s.p += contenido
+
     # Conexión y base de datos
-    yf = top + 610
+    yf = fondo + 20
     hf = clase(s, 420, yf + 20, 360, "FabricaConexion",
                ("-_pool: ThreadedConnectionPool (psycopg2)",),
                ("+obtener(): connection", "+devolver(conexion)", "+verificar()", "+cerrar()"),
                "", "app/modelo/conexion.py", GRIS, GRIS_CLARO)
-    s.linea([(300, top + 590), (300, yf + 20 + hf / 2), (420, yf + 20 + hf / 2)], TINTA, 1.2, "6 4", "abierta")
+    s.linea([(300, fondo), (300, yf + 20 + hf / 2), (420, yf + 20 + hf / 2)], TINTA, 1.2, "6 4", "abierta")
     s.texto(310, yf + 20 + hf / 2 - 8, "usa la conexión", 11, "normal", "start", TINTA, "italic")
     # cilindro PostgreSQL
     cx, cy = 1000, yf + 40
@@ -303,7 +309,7 @@ def clases_dao():
         s.rect(x, ye + 30, ancho, 22, GRIS_CLARO, GRIS, 0.9, 3)
         s.texto(x + ancho / 2, ye + 46, e, 11.5, "normal", "middle")
         x += ancho + 9
-    s.linea([(120, top + 590), (120, ye)], TINTA, 1.2, "6 4", "abierta")
+    s.linea([(120, fondo), (120, ye)], TINTA, 1.2, "6 4", "abierta")
     s.texto(128, ye - 10, "devuelve", 11, "normal", "start", TINTA, "italic")
     s.alto = ye + 75
     s.guardar("Clases_DAO")
@@ -350,12 +356,12 @@ def arquitectura():
          AZUL, AZUL_CLARO, "app/modelo")
     # BD
     cx, cy = 1060, 170
-    s.add(f'<path d="M{cx-115},{cy} v190 a115,20 0 0,0 230,0 v-190" fill="{AZUL_CLARO}" stroke="{AZUL}" stroke-width="1.5"/>')
+    s.add(f'<path d="M{cx-115},{cy} v215 a115,20 0 0,0 230,0 v-215" fill="{AZUL_CLARO}" stroke="{AZUL}" stroke-width="1.5"/>')
     s.add(f'<ellipse cx="{cx}" cy="{cy}" rx="115" ry="20" fill="#C9DBEF" stroke="{AZUL}" stroke-width="1.5"/>')
     for i, (t, b) in enumerate([("PostgreSQL 16/17", "bold"), ("local, Docker o Neon", "normal"), ("", "normal"),
                                 ("esquema conocimiento", "bold"), ("hipótesis, hechos, gránulos,", "normal"),
                                 ("reglas RN, ingenieros", "normal"), ("", "normal"), ("esquema transaccional", "bold"),
-                                ("aspirantes, evaluaciones,", "normal"), ("contabilización, resultado", "normal")]):
+                                ("aspirantes, evaluaciones,", "normal"), ("hechos, contabilización,", "normal"), ("resultado", "normal")]):
         s.texto(cx, cy + 45 + i * 17, t, 12, b, "middle", AZUL if b == "bold" else TINTA)
     # Flechas numeradas
     def paso(n, x, y):

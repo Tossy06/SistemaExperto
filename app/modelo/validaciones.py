@@ -27,20 +27,18 @@ def _decimal(texto):
 
 
 def validar_respuesta(pregunta, texto) -> Respuesta:
-    """RF-02: convierte el texto de una pregunta en una Respuesta válida o lanza ValueError."""
+    """RF-02: convierte el texto de una pregunta en una Respuesta válida o lanza ValueError.
+    Las preguntas de ESCALA aceptan enteros; las NUMERICAS, hasta dos decimales."""
     if not texto:
-        raise ValueError("La respuesta es obligatoria.")
-    if pregunta.tipo_respuesta == "OPCION":
-        opciones = {o.lower(): o for o in pregunta.opciones}
-        if texto.lower() not in opciones:
-            raise ValueError(f"Elija una opción: {', '.join(pregunta.opciones)}.")
-        return Respuesta(pregunta.id_pregunta, valor_opcion=opciones[texto.lower()])
+        raise ValueError("La respuesta es obligatoria." if pregunta.tipo_respuesta == "NUMERICA" else "Elija una opción.")
     valor = _decimal(texto)
-    if valor is None:
+    if valor is None or not valor.is_finite():
         raise ValueError("Escriba un número.")
     if not pregunta.valor_minimo <= valor <= pregunta.valor_maximo:
-        raise ValueError(f"El valor debe estar entre {pregunta.valor_minimo} y {pregunta.valor_maximo}.")
-    return Respuesta(pregunta.id_pregunta, valor_numerico=valor.quantize(Decimal("0.01")))
+        raise ValueError(f"El valor debe estar entre {pregunta.valor_minimo:g} y {pregunta.valor_maximo:g}.".replace(".", ","))
+    if pregunta.tipo_respuesta == "ESCALA" and valor != valor.to_integral_value():
+        raise ValueError("Elija una opción de la escala.")
+    return Respuesta(pregunta.id_pregunta, valor.quantize(Decimal("0.01")))
 
 
 def validar_registro(datos: dict, contrasena: str):

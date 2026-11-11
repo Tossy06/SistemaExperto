@@ -45,23 +45,29 @@ class SistemaExperto:
             raise ErrorNegocio("El correo o la contraseña no coinciden. Revíselos e intente de nuevo.")
         return credenciales[0]
 
+    def usuario_vigente(self, rol: str, id_usuario: int) -> bool:
+        """True si el usuario guardado en la sesión sigue existiendo en la base de datos
+        (deja de existir, p. ej., si se recarga la base o se cambia de servidor con la sesión abierta)."""
+        dao = {"aspirante": self.aspirantes, "ingeniero": self.ingenieros}.get(rol)
+        return bool(dao and dao.existe(id_usuario))
+
     # ---------- CU-03 y CU-04: evaluación vocacional ----------
     def evaluar(self, id_aspirante: int, textos: dict) -> int:
-        """Valida las 11 respuestas, ejecuta el motor y guarda la evaluación. Devuelve su número."""
+        """Valida las respuestas (una por pregunta, con el código P01... como nombre del campo),
+        ejecuta el motor y guarda la evaluación. Devuelve su número."""
         preguntas = self.preguntas.activas()
         respuestas, errores = [], {}
         for p in preguntas:
             try:
-                respuestas.append(validar_respuesta(p, (textos.get(p.codigo_variable) or "").strip()))
+                respuestas.append(validar_respuesta(p, (textos.get(p.codigo) or "").strip()))
             except ValueError as error:
-                errores[p.codigo_variable] = str(error)
+                errores[p.codigo] = str(error)
         if errores:
             raise ErroresFormulario(errores)
         try:
             resultado = self.motor.inferir(respuestas)
         except HechoNoDerivable as error:
-            codigo = next(p.codigo_variable for p in preguntas if p.id_pregunta == error.id_pregunta)
-            raise ErroresFormulario({codigo: str(error)})
+            raise ErroresFormulario({p.codigo: str(error) for p in preguntas if p.codigo_variable in error.codigos_variable})
         return self.evaluaciones.insertar(id_aspirante, respuestas, resultado)
 
     # ---------- CU-07: mantenimiento de la base de conocimiento ----------

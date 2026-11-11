@@ -7,6 +7,6 @@ class ReglaNoConcluyenteDAO(BaseDAO):
     def activas(self) -> list:
         filas = self._consultar("""
             SELECT id_regla_resultado_no_concluyente AS id_regla, codigo_regla, descripcion,
-                   tipo_variable, valor_hecho, operador, cantidad
+                   metrica, tipo_variable, valor_hecho, operador, umbral
             FROM conocimiento.reglas_resultado_no_concluyente WHERE activa ORDER BY codigo_regla""")
         return [ReglaNoConcluyente(**f) for f in filas]

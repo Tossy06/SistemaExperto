@@ -25,30 +25,35 @@ class IngenieroConocimiento:
 @dataclass(frozen=True)
 class Pregunta:
     id_pregunta: int
-    codigo_variable: str
+    codigo: str                    # P01 ... P23 (nombre del campo en el formulario)
+    codigo_variable: str           # variable del perfil que mide (DES-LM, INT-I, EST)
     nombre_variable: str
     tipo_variable: str             # AREA, INTERES o ESTILO
-    tipo_respuesta: str            # NUMERICA u OPCION
+    tipo_respuesta: str            # NUMERICA (nota con decimales) o ESCALA (entero de 1 a 5)
     enunciado: str
-    valor_minimo: Optional[Decimal]
-    valor_maximo: Optional[Decimal]
-    opciones: tuple = ()           # valores válidos cuando tipo_respuesta = OPCION
+    valor_minimo: Decimal
+    valor_maximo: Decimal
+    etiqueta_minima: Optional[str] = None
+    etiqueta_maxima: Optional[str] = None
 
 
 @dataclass(frozen=True)
 class Respuesta:
     id_pregunta: int
-    valor_numerico: Optional[Decimal] = None
-    valor_opcion: Optional[str] = None
+    valor: Decimal
 
 
 @dataclass(frozen=True)
 class Hecho:
+    """Hecho del perfil derivado de las respuestas (RF-02), con su grado de certeza."""
     id_hecho: int
     codigo: str
     variable: str
     tipo_variable: str             # AREA, INTERES o ESTILO
-    valor_clasificado: str         # Alto, Medio, Bajo, Independiente o Equipo
+    valor_clasificado: str         # Alto, Medio, Bajo, Primera, Segunda, Tercera, Posterior, Independiente, ...
+    valor_calculado: Decimal = Decimal("0")   # promedio de las preguntas de la variable
+    posicion: int = 1              # lugar frente a las variables del mismo tipo
+    grado: Decimal = Decimal("1")  # factor de certeza (0 a 1]
 
     def descripcion(self) -> str:
         return f"{self.variable} = {self.valor_clasificado}"
@@ -69,10 +74,11 @@ class ReglaNoConcluyente:
     id_regla: int
     codigo_regla: str
     descripcion: str
-    tipo_variable: str
-    valor_hecho: str
-    operador: str                  # '=' o '>='
-    cantidad: int
+    metrica: str                   # CONTEO_HECHOS o COINCIDENCIA_PRIMERA
+    tipo_variable: Optional[str]   # solo para CONTEO_HECHOS
+    valor_hecho: Optional[str]
+    operador: str                  # '=', '>=' o '<'
+    umbral: Decimal
 
 
 @dataclass
@@ -82,8 +88,11 @@ class ConteoHipotesis:
     codigo_hipotesis: str
     programa_academico: str
     numero_coincidencias: int = 0
-    suma_pesos: Decimal = Decimal("0")
-    probabilidad: Decimal = Decimal("0")
+    suma_aportes: Decimal = Decimal("0")          # suma de peso x grado de los gránulos que coinciden
+    maximo_alcanzable: Decimal = Decimal("1")     # suma que tendría un perfil ideal para esta hipótesis
+    grado_coincidencia: Decimal = Decimal("0")    # suma_aportes / maximo_alcanzable (0 a 1)
+    probabilidad: Decimal = Decimal("0")          # frente a todas las hipótesis contabilizadas
+    probabilidad_resultado: Decimal = Decimal("0")  # entre las cinco presentadas (solo las cinco)
     hechos_coincidentes: list = field(default_factory=list)
 
 

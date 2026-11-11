@@ -56,6 +56,14 @@ NUMERO_HIPOTESIS_RESULTADO = 5   # RF-03: el sistema presenta las cinco hipótes
 DECIMALES_CALCULO = 4            # decimales del cálculo de probabilidades
 DECIMALES_PRESENTACION = 2       # decimales al presentar las probabilidades
 
-# Respuestas del aspirante de ejemplo del documento (botón «Usar respuestas de ejemplo»)
-EJEMPLO_DEMO = {"DES-LM": "4.5", "DES-CI": "3.7", "DES-SH": "3.4", "DES-AF": "3.9", "INT-R": "60", "INT-I": "80",
-                "INT-A": "30", "INT-S": "55", "INT-E": "35", "INT-C": "45", "EST": "Independiente"}
+# Respuestas del aspirante de ejemplo del documento (botón «Usar respuestas de ejemplo»).
+# P01-P04: notas por área; P05-P22: tres ítems por categoría RIASEC (R, I, A, S, E, C) en escala 1 a 5;
+# P23: estilo de trabajo (1 = siempre por mi cuenta, 5 = siempre en equipo).
+EJEMPLO_DEMO = {"P01": "4.5", "P02": "3.7", "P03": "3.4", "P04": "3.9",
+                "P05": "4", "P06": "3", "P07": "4",      # Realista      3,67
+                "P08": "5", "P09": "4", "P10": "4",      # Investigativo 4,33
+                "P11": "2", "P12": "1", "P13": "2",      # Artístico     1,67
+                "P14": "3", "P15": "4", "P16": "3",      # Social        3,33
+                "P17": "2", "P18": "3", "P19": "2",      # Emprendedor   2,33
+                "P20": "3", "P21": "3", "P22": "3",      # Convencional  3,00
+                "P23": "2"}                              # Estilo: Independiente

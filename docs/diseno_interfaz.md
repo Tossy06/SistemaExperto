@@ -7,7 +7,7 @@ La interfaz se diseñó con la skill oficial **frontend-design** de Anthropic
 
 - **Tema:** orientación vocacional para aspirantes a la universidad.
 - **Público:** aspirantes de 16 a 18 años. El público secundario son los ingenieros del conocimiento que mantienen la base.
-- **Tarea principal:** responder 11 preguntas y entender cuáles son los cinco programas con mayor afinidad, y por qué.
+- **Tarea principal:** responder 23 preguntas (4 notas por área, 18 actividades RIASEC y el estilo de trabajo) y entender cuáles son los cinco programas con mayor afinidad, y por qué.
 
 ## Tokens
 
@@ -26,8 +26,8 @@ La interfaz se diseñó con la skill oficial **frontend-design** de Anthropic
 
 ## Decisiones de experiencia de uso
 
-- Cada respuesta numérica tiene un deslizador y un campo de texto sincronizados. Al lado se muestra la clasificación (Alto, Medio o Bajo), calculada con los rangos que vienen de la base de conocimiento.
-- El panel lateral muestra el progreso ("7 de 11 respondidas") y deja el botón principal siempre a la vista.
+- Las notas por área (P01–P04) tienen un deslizador y un campo de texto sincronizados, y al lado se muestra la clasificación (Alto, Medio o Bajo). Las 18 actividades RIASEC (P05–P22) y el estilo de trabajo (P23) se responden en una escala de 1 a 5; el estilo se clasifica como Independiente, Indistinto o Equipo, y los intereses por la posición de su promedio frente a las demás categorías (Primera, Segunda, Tercera o Posterior). Los rangos vienen de la base de conocimiento.
+- El panel lateral muestra el progreso ("7 de 23 respondidas") y deja el botón principal siempre a la vista.
 - La validación ocurre en el servidor y marca cada respuesta con su error. El foco va a la primera respuesta con error.
 - El resultado explica cada programa con los datos del perfil y las reglas RG que lo respaldan.
 - Todo funciona sin JavaScript (mejora progresiva), con foco visible y etiquetas accesibles. Es adaptable hasta 360 px y tiene una hoja de estilos para imprimir o guardar en PDF.

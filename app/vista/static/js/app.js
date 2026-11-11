@@ -36,6 +36,7 @@
   var formulario = document.querySelector("[data-cuestionario]");
   if (formulario) {
     var rangos = JSON.parse(document.getElementById("rangos-clasificacion").textContent);
+    var nombres = JSON.parse(document.getElementById("nombres-variables").textContent);
     var ejemplo = JSON.parse(document.getElementById("respuestas-ejemplo").textContent);
     var total = Number(formulario.dataset.total);
     var preguntas = Array.prototype.slice.call(formulario.querySelectorAll("[data-pregunta]"));
@@ -48,12 +49,15 @@
       var limpio = String(texto).trim().replace(",", ".");
       return limpio === "" || isNaN(limpio) ? null : Number(limpio);
     }
-    // Las notas (escala hasta 10) se muestran con un decimal; los porcentajes, sin decimales.
-    function decimal(n, maximo) { return n.toFixed(maximo <= 10 ? 1 : 0).replace(".", ","); }
+    function decimal(n, decimales) { return n.toFixed(decimales === undefined ? 1 : decimales).replace(".", ","); }
+    function claseCss(texto) {
+      return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    }
 
     // La clasificación se calcula con los rangos de la base de conocimiento (no hay valores fijos aquí).
-    function clasificar(codigo, valor) {
-      var rangosVariable = rangos[codigo] || [];
+    // `valor` es el promedio (variables RANGO) o la posición (variables POSICION).
+    function clasificar(codigoVariable, valor) {
+      var rangosVariable = (rangos[codigoVariable] || {}).rangos || [];
       var redondeado = Math.round(valor * 100) / 100;
       for (var i = 0; i < rangosVariable.length; i++) {
         if (redondeado >= rangosVariable[i].minimo && redondeado <= rangosVariable[i].maximo) return rangosVariable[i].valor;
@@ -63,18 +67,31 @@
 
     function etiquetaNivel(clase) {
       var etiqueta = document.createElement("span");
-      etiqueta.className = "nivel nivel-" + clase.toLowerCase();
+      etiqueta.className = "nivel nivel-" + claseCss(clase);
       etiqueta.textContent = clase;
       return etiqueta;
     }
 
+    // Valor marcado en una pregunta de escala, o null.
+    function marcado(bloque) {
+      var opcion = bloque.querySelector("input[type=radio]:checked");
+      return opcion ? Number(opcion.value) : null;
+    }
+
     function actualizarPregunta(bloque) {
       var campo = bloque.querySelector(".valor-numerico");
-      if (!campo) return;
       var salida = bloque.querySelector(".clasificacion");
+      if (!campo) {   // escala: se clasifica solo si la variable usa rangos (p. ej. el estilo de trabajo)
+        if (!salida) return;
+        var punto = marcado(bloque);
+        var claseEscala = punto === null ? null : clasificar(bloque.dataset.variable, punto);
+        salida.innerHTML = "";
+        if (claseEscala) salida.appendChild(etiquetaNivel(claseEscala));
+        return;
+      }
       var deslizador = bloque.querySelector(".deslizador");
       var valor = numero(campo.value);
-      var clase = valor === null ? null : clasificar(bloque.dataset.pregunta, valor);
+      var clase = valor === null ? null : clasificar(bloque.dataset.variable, valor);
       salida.innerHTML = "";
       if (clase) salida.appendChild(etiquetaNivel(clase));
       else if (valor !== null) salida.textContent = "Fuera de rango";
@@ -91,8 +108,8 @@
       if (campo.value.trim() === "") return "Responda esta pregunta.";
       var valor = numero(campo.value);
       var minimo = Number(bloque.dataset.minimo), maximo = Number(bloque.dataset.maximo);
-      if (valor === null || valor < minimo || valor > maximo || !clasificar(bloque.dataset.pregunta, valor))
-        return "Escriba un número entre " + decimal(minimo, maximo) + " y " + decimal(maximo, maximo) + ".";
+      if (valor === null || valor < minimo || valor > maximo || !clasificar(bloque.dataset.variable, valor))
+        return "Escriba un número entre " + decimal(minimo) + " y " + decimal(maximo) + ".";
       return null;
     }
     function respondida(bloque) { return problema(bloque) === null; }
@@ -108,14 +125,38 @@
       }
     }
 
-    // Aviso informativo, no bloqueante: si todos los porcentajes respondidos de un paso son menores que 5,
-    // probablemente se usó una escala de 1 a 5. El formulario se puede enviar igual.
-    function revisarEscala() {
-      formulario.querySelectorAll("[data-aviso-escala]").forEach(function (aviso) {
-        var valores = Array.prototype.slice.call(aviso.closest("fieldset").querySelectorAll(".valor-numerico"))
-          .map(function (campo) { return numero(campo.value); })
-          .filter(function (v) { return v !== null; });
-        aviso.hidden = !(valores.length >= 3 && valores.every(function (v) { return v < 5; }));
+    // Vista previa del código Holland: promedio de los ítems de cada tipo RIASEC y posición con empates compartidos
+    // (como DENSE_RANK en el servidor). La posición se clasifica con los rangos de la base de conocimiento.
+    function actualizarHolland() {
+      var panel = formulario.querySelector("[data-holland]");
+      if (!panel) return;
+      var grupos = {}, orden = [];
+      panel.closest("fieldset").querySelectorAll("[data-pregunta]").forEach(function (bloque) {
+        var codigo = bloque.dataset.variable;
+        if (!grupos[codigo]) { grupos[codigo] = []; orden.push(codigo); }
+        grupos[codigo].push(marcado(bloque));
+      });
+      var completos = orden.filter(function (c) { return grupos[c].every(function (v) { return v !== null; }); })
+        .map(function (c) {
+          var suma = grupos[c].reduce(function (a, v) { return a + v; }, 0);
+          return { codigo: c, promedio: Math.round(suma / grupos[c].length * 100) / 100 };
+        });
+      var distintos = completos.map(function (f) { return f.promedio; })
+        .filter(function (v, i, todos) { return todos.indexOf(v) === i; }).sort(function (a, b) { return b - a; });
+      var listaHolland = panel.querySelector(".holland-lista");
+      listaHolland.innerHTML = "";
+      if (completos.length < orden.length) return;   // las posiciones solo tienen sentido con los seis tipos
+      completos.sort(function (a, b) { return b.promedio - a.promedio; }).forEach(function (f) {
+        var posicion = distintos.indexOf(f.promedio) + 1;
+        var li = document.createElement("li");
+        var lugar = document.createElement("span"); lugar.className = "cifra"; lugar.textContent = posicion + ".º";
+        var nombre = document.createElement("span"); nombre.textContent = (nombres[f.codigo] || f.codigo).replace("Interés ", "");
+        var cifra = document.createElement("span"); cifra.className = "cifra"; cifra.textContent = decimal(f.promedio, 2);
+        var nivel = document.createElement("span");
+        var clase = clasificar(f.codigo, posicion);
+        if (clase) nivel.appendChild(etiquetaNivel(clase));
+        li.appendChild(lugar); li.appendChild(nombre); li.appendChild(cifra); li.appendChild(nivel);
+        listaHolland.appendChild(li);
       });
     }
 
@@ -126,7 +167,7 @@
       var n = preguntas.filter(respondida).length;
       formulario.querySelector("[data-respondidas]").textContent = n;
       formulario.querySelector("[data-barra-progreso]").style.width = (n / total * 100) + "%";
-      revisarEscala();
+      actualizarHolland();
       actualizarLista();
     }
 
@@ -183,12 +224,14 @@
           var campo = p.querySelector(".valor-numerico");
           if (campo) {
             var valor = numero(campo.value);
-            var clase = valor === null ? null : clasificar(p.dataset.pregunta, valor);
-            cifra.textContent = campo.value.trim() === "" ? "—" : campo.value.trim() + (p.querySelector(".unidad") ? " %" : "");
+            var clase = valor === null ? null : clasificar(p.dataset.variable, valor);
+            cifra.textContent = campo.value.trim() === "" ? "—" : campo.value.trim();
             if (clase) nivel.appendChild(etiquetaNivel(clase));
           } else {
-            var marcada = p.querySelector("input[type=radio]:checked");
-            if (marcada) nivel.appendChild(etiquetaNivel(marcada.value));
+            var punto = marcado(p);
+            cifra.textContent = punto === null ? "—" : punto + " de 5";
+            var claseEscala = punto === null || !p.querySelector(".clasificacion") ? null : clasificar(p.dataset.variable, punto);
+            if (claseEscala) nivel.appendChild(etiquetaNivel(claseEscala));
           }
           if (!respondida(p)) { nivel.className = "revision-falta"; nivel.textContent = "Falta"; }
           li.appendChild(nombre); li.appendChild(cifra); li.appendChild(nivel);
@@ -317,6 +360,7 @@
         } else {
           var opcion = bloque.querySelector('input[type=radio][value="' + valor + '"]');
           if (opcion) opcion.checked = true;
+          actualizarPregunta(bloque);
         }
         if (respondida(bloque)) marcarError(bloque, null);
       });
@@ -337,6 +381,7 @@
           actualizarPregunta(bloque);
         }
         bloque.querySelectorAll("input[type=radio]").forEach(function (r) { r.checked = false; });
+        actualizarPregunta(bloque);
         marcarError(bloque, null);
       });
       if (formulario.classList.contains("asistente")) { visitado = 0; mostrar(0, false); }
@@ -352,34 +397,6 @@
   /* ---------- Filtro con envío automático ---------- */
   document.querySelectorAll("[data-envio-automatico] select").forEach(function (lista) {
     lista.addEventListener("change", function () { lista.form.submit(); });
-  });
-
-  /* ---------- Recorrido animado del árbol de decisión ----------
-     Sin JavaScript la animación CSS corre al cargar la página. Con JavaScript espera a que el árbol sea visible
-     y el botón «Ver de nuevo» la repite (se quita y se vuelve a poner la clase que la activa). */
-  document.querySelectorAll("[data-arbol]").forEach(function (arbol) {
-    var seccion = arbol.closest(".recorrido");
-    var boton = seccion && seccion.querySelector("[data-repetir-arbol]");
-    function reproducir() {
-      arbol.classList.remove("arbol-animado", "arbol-espera");
-      void arbol.offsetWidth;  // fuerza al navegador a reiniciar las animaciones
-      arbol.classList.add("arbol-animado");
-    }
-    if (boton) {
-      boton.hidden = false;
-      boton.addEventListener("click", reproducir);
-    }
-    if ("IntersectionObserver" in window) {
-      arbol.classList.remove("arbol-animado");
-      arbol.classList.add("arbol-espera");  // oculto hasta que se vea, para que la animación empiece desde la raíz
-      var observador = new IntersectionObserver(function (entradas) {
-        if (entradas[0].isIntersecting) {
-          reproducir();
-          observador.disconnect();
-        }
-      }, { threshold: 0.25 });
-      observador.observe(arbol);
-    }
   });
 
   /* ---------- Imprimir resultado ---------- */

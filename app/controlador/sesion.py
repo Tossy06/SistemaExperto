@@ -3,7 +3,7 @@ import hmac
 import secrets
 from functools import wraps
 
-from flask import abort, flash, redirect, request, session, url_for
+from flask import abort, current_app, flash, redirect, request, session, url_for
 
 INICIO_POR_ROL = {"aspirante": "aspirante.inicio", "ingeniero": "ingeniero.panel"}
 
@@ -31,6 +31,12 @@ def rol_requerido(rol):
                 return redirect(url_for("publico.inicio", siguiente=request.path))
             if usuario["rol"] != rol:
                 return redirect(url_for(INICIO_POR_ROL[usuario["rol"]]))
+            # La cookie puede sobrevivir a la cuenta (base recargada o cambio de servidor): se comprueba que exista.
+            if not current_app.extensions["sistema_experto"].usuario_vigente(rol, usuario["id"]):
+                session.clear()
+                flash("Su sesión ya no es válida porque la cuenta no existe en la base de datos actual. "
+                      "Inicie sesión o regístrese de nuevo.", "aviso")
+                return redirect(url_for("publico.inicio"))
             return vista(*args, **kwargs)
         return envoltura
     return decorador

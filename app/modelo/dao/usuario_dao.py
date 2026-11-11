@@ -26,11 +26,19 @@ class AspiranteDAO(BaseDAO):
         return f and (Aspirante(f["id_aspirante"], f["documento"], f["nombres"], f["apellidos"], f["correo"]),
                       f["contrasena_hash"])
 
+    def existe(self, id_aspirante) -> bool:
+        return self._consultar_uno("SELECT 1 AS si FROM transaccional.aspirantes WHERE id_aspirante = %s",
+                                   (id_aspirante,)) is not None
+
     def contar(self) -> int:
         return self._consultar_uno("SELECT COUNT(*) AS n FROM transaccional.aspirantes")["n"]
 
 
 class IngenieroDAO(BaseDAO):
+    def existe(self, id_ingeniero) -> bool:
+        return self._consultar_uno("SELECT 1 AS si FROM conocimiento.ingenieros_conocimiento WHERE id_ingeniero = %s",
+                                   (id_ingeniero,)) is not None
+
     def credenciales(self, correo):
         """Devuelve (IngenieroConocimiento, hash de la contraseña) o None si el correo no existe."""
         f = self._consultar_uno("""SELECT id_ingeniero, documento, nombres, apellidos, correo, contrasena_hash

@@ -1,11 +1,13 @@
 # Sistema Experto de Apoyo a la Orientación Académica
 
 Aplicación **web** en **Python 3.10+** con **Flask** y **PostgreSQL** (local, en Docker o en la nube con **Neon**).
-A partir de las respuestas de un aspirante a un cuestionario de 11 preguntas, identifica las **cinco hipótesis**
+A partir de las respuestas de un aspirante a un cuestionario de 23 preguntas, identifica las **cinco hipótesis**
 (programas académicos) de mayor probabilidad de afinidad mediante **consultas granulares sucesivas** a una base de
 conocimiento, sin sentencias condicionales sobre el dominio en el código.
 
-> El resultado es un **grado de afinidad**, no una decisión ni una recomendación de admisión.
+> El resultado es una **probabilidad** y un **grado de coincidencia**, no una decisión ni una recomendación de admisión.
+> El conocimiento del experto fue simulado con IA y validado por el ingeniero del conocimiento; los 18 ítems de intereses
+> se inspiran en el modelo RIASEC de Holland y no son un test psicométrico estandarizado.
 
 El documento técnico completo (formulación, manual técnico, reglas, diagramas y aplicación web) está en
 [`docs/sistema_experto_academico-2.pdf`](docs/sistema_experto_academico-2.pdf).
@@ -30,13 +32,13 @@ El aspirante responde tres bloques de preguntas:
 
 | Bloque | Preguntas | Respuesta | Clasificación |
 |---|---|---|---|
-| Desempeño académico | 4 áreas: Lógico-Matemática, Científico-Investigativa, Social-Humanística, Administrativo-Financiera | Promedio de 1,0 a 5,0 | Alto (4,0–5,0), Medio (3,5–3,9), Bajo (1,0–3,4) |
-| Intereses vocacionales (test RIASEC) | 6 categorías: Realista, Investigativo, Artístico, Social, Emprendedor, Convencional | Porcentaje de 0 a 100 | Alto (≥ 70 %), Medio (40–69 %), Bajo (< 40 %) |
-| Estilo de trabajo | 1 pregunta | Independiente o Equipo | — |
+| Desempeño académico | 4 notas (P01–P04): Lógico-Matemática, Científico-Investigativa, Social-Humanística, Administrativo-Financiera | Promedio de 1,0 a 5,0 | Alto (4,00–5,00), Medio (3,50–3,99), Bajo (1,00–3,49) |
+| Intereses vocacionales (RIASEC) | 18 actividades (P05–P22), tres por categoría: Realista, Investigativo, Artístico, Social, Emprendedor, Convencional | Escala de 1 (me desagrada mucho) a 5 (me gusta mucho) | Por posición del promedio frente a las demás categorías (código Holland): Primera (1.º), Segunda (2.º), Tercera (3.º), Posterior (4.º a 6.º) |
+| Estilo de trabajo | 1 pregunta (P23) | Escala de 1 (siempre por mi cuenta) a 5 (siempre en equipo) | Independiente (1,00–2,49), Indistinto (2,50–3,49), Equipo (3,50–5,00) |
 
-Con esas respuestas el sistema deriva los hechos del perfil, consulta los gránulos de conocimiento de cada hecho,
-contabiliza las coincidencias por programa, calcula la probabilidad de cada uno y presenta los cinco primeros, con la
-explicación de las reglas que los respaldan y el recorrido por el árbol de decisión.
+Con esas respuestas el sistema deriva un hecho por variable (11 hechos), consulta los gránulos de conocimiento de cada
+hecho, contabiliza los aportes por programa (peso × grado de certeza del hecho), calcula la probabilidad y el grado de
+coincidencia de cada uno y presenta los cinco primeros, con la explicación de las reglas que los respaldan.
 
 ## Base de conocimiento
 
@@ -46,23 +48,23 @@ modificar sin cambiar el programa.
 | Elemento | Cantidad | Tabla | Descripción |
 |---|---|---|---|
 | Hipótesis | 24 | `hipotesis_programas` | Programas académicos H01 a H24 |
-| Variables | 11 | `variables_perfil` | 4 áreas, 6 categorías RIASEC y estilo de trabajo |
-| Preguntas | 11 | `preguntas_cuestionario_vocacional` | Enunciado y dominio válido de cada respuesta |
-| Hechos (reglas RC) | 32 | `hechos_perfil` | Variable + valor (Alto, Medio, Bajo, Independiente, Equipo) con su rango de clasificación |
-| Gránulos (reglas RG) | 72 | `granulos_hecho_hipotesis` | Hecho → hipótesis con un peso: área Alta 0,40, interés Alto 0,40, estilo 0,20 |
+| Variables | 11 | `variables_perfil` | 4 áreas, 6 categorías RIASEC y estilo; criterio RANGO o POSICION y si pondera intensidad |
+| Preguntas | 23 | `preguntas_cuestionario_vocacional` | Enunciado, tipo (nota o escala), dominio y textos de la escala |
+| Hechos (reglas RC) | 39 | `hechos_perfil` | Variable + valor con su rango (de promedio o de posición), sin huecos entre rangos |
+| Gránulos (reglas RG) | 168 | `granulos_hecho_hipotesis` | Hecho → hipótesis con un peso (7 por programa) |
 | Reglas RN | 3 | `reglas_resultado_no_concluyente` | Condiciones que marcan el resultado como no concluyente |
 
-Cada programa tiene tres gránulos: un área en nivel **Alto**, un interés RIASEC en nivel **Alto** y un estilo de
-trabajo. Los niveles Medio y Bajo se clasifican y se guardan, pero no suman afinidad (sí cuentan para las reglas RN).
+Cada programa tiene siete gránulos: área Alto 0,40 y Medio 0,20; interés en primera preferencia 0,40, segunda 0,25 y
+tercera 0,10; estilo propio 0,20 e Indistinto 0,10. El máximo alcanzable por un perfil ideal es 1,00.
 
-Reglas de resultado no concluyente:
+Reglas de resultado no concluyente (se evalúan por métrica, operador y umbral guardados en la base):
 
-- **RN-01** Bajo rendimiento general: las cuatro áreas con desempeño Bajo.
-- **RN-02** Empate entre áreas: dos o más áreas con desempeño Alto.
-- **RN-03** Empate de interés: dos o más categorías RIASEC con interés Alto.
+- **RN-01** Las cuatro áreas con desempeño Bajo (conteo de hechos = 4).
+- **RN-02** Tres o más categorías RIASEC empatadas en primera preferencia (conteo de hechos ≥ 3).
+- **RN-03** El programa de primer lugar coincide en menos de la mitad con el perfil (grado de coincidencia < 0,50).
 
 Las transacciones de cada evaluación se guardan en el esquema `transaccional` (aspirantes, evaluaciones, respuestas,
-tabla de contabilización, cinco hipótesis y marcas de resultado no concluyente).
+hechos del aspirante con su grado, tabla de contabilización, cinco hipótesis y marcas de resultado no concluyente).
 
 Scripts SQL en [`bd/`](bd):
 
@@ -76,20 +78,23 @@ Scripts SQL en [`bd/`](bd):
 
 El motor (`app/modelo/motor_inferencia.py`) no contiene condicionales sobre programas, áreas, categorías ni valores.
 
-1. **RF-02. Derivación de hechos.** Por cada una de las 11 respuestas, una consulta devuelve el hecho cuyo rango
-   contiene el valor (reglas RC).
-2. **RF-03. Consulta granular.** Por cada hecho, una consulta independiente a `granulos_hecho_hipotesis`. Cada gránulo
-   suma 1 coincidencia y su peso a la hipótesis correspondiente en la tabla de contabilización.
-3. **RF-03. Probabilidad.** P(h) = suma de pesos de h ÷ suma de pesos de todas las hipótesis contabilizadas × 100.
-   Se ordena por probabilidad, luego por número de coincidencias y luego por código, y se toman las cinco primeras.
-4. **Reglas RN.** Se cuentan los hechos por (tipo de variable, valor) y se comparan con el operador y la cantidad que
-   indica cada regla en la base de conocimiento.
+1. **RF-02. Derivación de hechos (reglas RC).** Una consulta agrupa las 23 respuestas por variable, calcula el
+   promedio, la posición de cada variable frente a las de su tipo (`DENSE_RANK`, los empates comparten lugar) y el
+   grado de certeza (promedio ÷ 5 si la variable pondera intensidad; 1 para el estilo). Según el criterio de la
+   variable, el promedio o la posición se ubica en el rango de un hecho.
+2. **RF-03. Consulta granular (reglas RG).** Por cada hecho, una consulta independiente a `granulos_hecho_hipotesis`.
+   Cada gránulo suma 1 coincidencia y aporta peso × grado a su hipótesis en la tabla de contabilización.
+3. **RF-03. Probabilidad (reglas RI).** P(h) = suma de aportes de h ÷ suma de aportes de todas las hipótesis × 100.
+   Grado de coincidencia = suma de aportes ÷ máximo alcanzable de h. Se ordena por suma, luego por coincidencias y
+   luego por código; de las cinco primeras se informa la probabilidad entre ellas (suma 100 %).
+4. **Reglas RN.** Cada regla calcula su métrica (conteo de hechos o coincidencia del primer lugar) y la compara con el
+   operador y el umbral de la base de conocimiento, por tabla de despacho.
 5. **RNF-04. Persistencia.** La evaluación completa se guarda en una sola transacción. Los triggers de la base impiden
    modificarla o eliminarla después.
 
-Ejemplo (el mismo del documento técnico): promedios 4,5 / 3,7 / 3,4 / 3,9; RIASEC 60, 80, 30, 55, 35 y 45 %;
-estilo Independiente. Resultado: Ingeniería de Software 15,63 %, Ingeniería de Sistemas 12,50 %, Ingeniería
-Mecánica 9,38 %, Estadística 9,38 % y Biología 9,38 %.
+Ejemplo (el mismo del documento técnico): notas 4,5 / 3,7 / 3,4 / 3,9; intereses I 4,33 > R 3,67 > S 3,33 > C 3,00 >
+E 2,33 > A 1,67 (código Holland I-R-S); estilo 2 (Independiente). Resultado: Ingeniería de Software 25,10 %
+(coincidencia 90,6 %), Ingeniería Mecánica 20,59 %, Ingeniería de Sistemas 19,56 %, Biología 19,23 % y Estadística 15,51 %.
 
 ## Diagramas
 
@@ -150,20 +155,15 @@ PDF: [`docs/Arquitectura_Web_MVC.svg.pdf`](docs/Arquitectura_Web_MVC.svg.pdf)
 
 ## Capturas de la aplicación
 
-**Cuestionario por bloques.** Cada bloque explica qué mide, qué se escribe y cómo se clasifica cada valor; no deja
-avanzar con respuestas vacías o fuera de rango y termina con una revisión de todas las respuestas.
+**Cuestionario por bloques.** Cada bloque explica qué mide, qué se responde y cómo se clasifica; en el bloque de
+intereses muestra en vivo el orden de preferencias (código Holland). No deja avanzar con respuestas vacías o fuera de rango y termina con una revisión de todas las respuestas.
 
 ![Cuestionario](docs/capturas/cuestionario.png)
 
-**Resultado.** Programa con mayor afinidad, cinco hipótesis, respuestas clasificadas, explicación por reglas y tabla
+**Resultado.** Programa con mayor probabilidad, cinco hipótesis, perfil clasificado con su certeza, explicación por reglas y tabla
 de contabilización.
 
 ![Resultado](docs/capturas/resultado.png)
-
-**Recorrido por el árbol de decisión.** Muestra el árbol completo y se anima nivel por nivel. En azul, los hechos
-del aspirante que coinciden con cada rama; en gris, los que no. Cada hoja muestra la afinidad que obtuvo el programa.
-
-![Recorrido por el árbol](docs/capturas/recorrido_arbol.png)
 
 Diseño de la interfaz (colores, tipografía y decisiones de uso): [`docs/diseno_interfaz.md`](docs/diseno_interfaz.md).
 
@@ -178,7 +178,6 @@ app/
     sistema_experto.py          Fachada del modelo: registrar, autenticar, evaluar, mantener gránulos
     entidades.py                Aspirante, Pregunta, Respuesta, Hecho, Granulo, ConteoHipotesis, ...
     motor_inferencia.py         MotorInferencia y TablaContabilizacion
-    arbol_decision.py           Arma el recorrido del árbol de decisión que se muestra en el resultado
     validaciones.py             Validación de respuestas, registro y pesos; errores de negocio
     seguridad.py                Hash de contraseñas (scrypt)
     conexion.py                 Pool de conexiones PostgreSQL (FabricaConexion)
@@ -195,7 +194,7 @@ app/
     sesion.py                   Sesión por rol y protección CSRF
 bd/                             Scripts SQL: esquema, carga del conocimiento, consultas de gránulos
 docs/                           Documento técnico, diagramas (PDF, SVG y PNG) y capturas
-pruebas/                        Pruebas del motor, del árbol de decisión y de la capa web (sin base de datos)
+pruebas/                        Pruebas del motor y de la capa web (sin base de datos)
 legado/aws_lambda/              Versión anterior: API en AWS Lambda + base de conocimiento en S3
 ```
 
@@ -220,6 +219,10 @@ de `bd/`.
 
 **Opción B: PostgreSQL local o Neon.** Ejecute en orden `bd/01_esquema.sql`, `bd/02_carga_conocimiento.sql` y
 `bd/03_consultas_granulos.sql` (pgAdmin › Query Tool, o Neon › SQL Editor).
+
+> **Si ya tenía cargada la versión anterior** (11 preguntas): vuelva a ejecutar los tres scripts. `01_esquema.sql`
+> borra y crea de nuevo los dos esquemas, así que se pierden las evaluaciones y cuentas creadas; las cuentas de
+> prueba vuelven con `02_carga_conocimiento.sql`. Con Docker: `docker compose down -v` y `docker compose up -d`.
 
 ### 2. Configurar el archivo `.env`
 
@@ -261,7 +264,7 @@ También puede crear una cuenta de aspirante desde la página de inicio.
 
 **Aspirante:** crear una cuenta, iniciar sesión, responder el cuestionario por bloques (con la descripción de cada
 pregunta y la clasificación en vivo según los rangos de la base de conocimiento), ver el resultado con las cinco
-hipótesis, la explicación por reglas, la tabla de contabilización y el recorrido animado por el árbol de decisión,
+hipótesis, su perfil (promedio, posición y certeza), la explicación por reglas y la tabla de contabilización,
 consultar su historial de evaluaciones e imprimir o guardar el resultado en PDF.
 
 **Ingeniero del conocimiento:** ver un panel con indicadores, consultar los gránulos por hipótesis, agregar gránulos,
@@ -281,8 +284,7 @@ evaluaciones.
 | Ingeniero | CU-09 Consultar reglas RN y rangos RC | RF-04 | `GET /ingeniero/reglas` |
 | Ingeniero | CU-10 Supervisar las evaluaciones | RF-04 | `GET /ingeniero/evaluaciones`, `GET /ingeniero/evaluaciones/<id>` |
 
-La interfaz funciona también sin JavaScript: el cuestionario muestra los tres bloques juntos y el árbol se anima solo
-con CSS.
+La interfaz funciona también sin JavaScript: el cuestionario muestra los tres bloques juntos.
 
 ## Seguridad
 
@@ -299,8 +301,7 @@ con CSS.
 python -m unittest discover -s pruebas -v
 ```
 
-18 pruebas, sin base de datos: motor de inferencia (`test_motor_inferencia.py`), recorrido del árbol de decisión
-(`test_arbol_decision.py`) y capa web (`test_web.py`).
+14 pruebas, sin base de datos: motor de inferencia (`test_motor_inferencia.py`) y capa web (`test_web.py`).
 
 ## Versión anterior
 

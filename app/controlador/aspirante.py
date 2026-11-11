@@ -22,8 +22,10 @@ def inicio():
 
 
 def _pagina_cuestionario(valores, errores, estado=200):
-    return render_template("aspirante/cuestionario.html", preguntas=sistema().preguntas.activas(), valores=valores,
-                           errores=errores, rangos=sistema().hechos.rangos_por_variable(), ejemplo=EJEMPLO_DEMO), estado
+    preguntas = sistema().preguntas.activas()
+    return render_template("aspirante/cuestionario.html", preguntas=preguntas, valores=valores, errores=errores,
+                           rangos=sistema().hechos.rangos_por_variable(), ejemplo=EJEMPLO_DEMO,
+                           nombres={p.codigo_variable: p.nombre_variable for p in preguntas}), estado
 
 
 @bp.get("/cuestionario")

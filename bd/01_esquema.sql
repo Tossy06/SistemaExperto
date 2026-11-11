@@ -34,29 +34,39 @@ CREATE TABLE conocimiento.variables_perfil (
     codigo              VARCHAR(10)  NOT NULL UNIQUE,          -- DES-LM, INT-I, EST
     nombre              VARCHAR(80)  NOT NULL UNIQUE,          -- Desempeño Lógico-Matemática
     tipo_variable       VARCHAR(10)  NOT NULL CHECK (tipo_variable IN ('AREA','INTERES','ESTILO')),
-    tipo_respuesta      VARCHAR(10)  NOT NULL CHECK (tipo_respuesta IN ('NUMERICA','OPCION'))
+    -- RANGO: el promedio de sus preguntas se ubica en un rango (reglas RC).
+    -- POSICION: se ordena frente a las demás variables del mismo tipo y la posición se ubica en un rango (código Holland).
+    criterio_clasificacion VARCHAR(10) NOT NULL CHECK (criterio_clasificacion IN ('RANGO','POSICION')),
+    -- TRUE: el grado de certeza del hecho es promedio / valor máximo; FALSE: el grado es 1.
+    pondera_intensidad  BOOLEAN      NOT NULL
 );
 
+-- Cada variable se mide con una o varias preguntas (las de interés tienen tres ítems RIASEC).
 CREATE TABLE conocimiento.preguntas_cuestionario_vocacional (
     id_pregunta         SERIAL PRIMARY KEY,
-    id_variable         INT          NOT NULL UNIQUE REFERENCES conocimiento.variables_perfil(id_variable),
+    codigo              VARCHAR(5)   NOT NULL UNIQUE,          -- P01 ... P23
+    id_variable         INT          NOT NULL REFERENCES conocimiento.variables_perfil(id_variable),
     enunciado           VARCHAR(300) NOT NULL,
-    valor_minimo        NUMERIC(5,2),
-    valor_maximo        NUMERIC(5,2),
+    tipo_respuesta      VARCHAR(10)  NOT NULL CHECK (tipo_respuesta IN ('NUMERICA','ESCALA')),  -- nota con decimales o escala 1 a 5
+    valor_minimo        NUMERIC(5,2) NOT NULL,
+    valor_maximo        NUMERIC(5,2) NOT NULL,
+    etiqueta_minima     VARCHAR(40),                           -- textos de los extremos de la escala
+    etiqueta_maxima     VARCHAR(40),
     orden               SMALLINT     NOT NULL UNIQUE,
-    activa              BOOLEAN      NOT NULL DEFAULT TRUE
+    activa              BOOLEAN      NOT NULL DEFAULT TRUE,
+    CHECK (valor_minimo < valor_maximo)
 );
 
--- Un hecho es (variable, valor). Para variables numéricas guarda el rango de clasificación (reglas RC).
+-- Un hecho es (variable, valor). El rango se compara con el promedio (RANGO) o con la posición (POSICION) (reglas RC).
 CREATE TABLE conocimiento.hechos_perfil (
     id_hecho            SERIAL PRIMARY KEY,
-    codigo              VARCHAR(12)  NOT NULL UNIQUE,          -- DES-LM-ALT
+    codigo              VARCHAR(12)  NOT NULL UNIQUE,          -- DES-LM-ALT, INT-I-P1, EST-IND
     id_variable         INT          NOT NULL REFERENCES conocimiento.variables_perfil(id_variable),
-    valor_clasificado   VARCHAR(20)  NOT NULL,                 -- Alto, Medio, Bajo, Independiente, Equipo
-    rango_minimo        NUMERIC(6,2),
-    rango_maximo        NUMERIC(6,2),
+    valor_clasificado   VARCHAR(20)  NOT NULL,                 -- Alto, Medio, Bajo, Primera, Segunda, Tercera, Posterior, ...
+    rango_minimo        NUMERIC(6,2) NOT NULL,
+    rango_maximo        NUMERIC(6,2) NOT NULL,
     UNIQUE (id_variable, valor_clasificado),
-    CHECK ((rango_minimo IS NULL AND rango_maximo IS NULL) OR rango_minimo <= rango_maximo)
+    CHECK (rango_minimo <= rango_maximo)
 );
 
 -- Gránulo de conocimiento (reglas RG): un hecho -> una hipótesis con un peso
@@ -72,16 +82,20 @@ CREATE TABLE conocimiento.granulos_hecho_hipotesis (
     UNIQUE (id_hecho, id_hipotesis)
 );
 
--- Reglas de resultado no concluyente (RN): SI cantidad de hechos (tipo_variable, valor) <operador> cantidad ENTONCES marcar
+-- Reglas de resultado no concluyente (RN): SI <métrica> <operador> <umbral> ENTONCES marcar el resultado.
+--   CONTEO_HECHOS:        cantidad de hechos del aspirante con (tipo_variable, valor_hecho)
+--   COINCIDENCIA_PRIMERA: grado de coincidencia (0 a 1) de la hipótesis que quedó de primera
 CREATE TABLE conocimiento.reglas_resultado_no_concluyente (
     id_regla_resultado_no_concluyente SERIAL PRIMARY KEY,
     codigo_regla        VARCHAR(6)   NOT NULL UNIQUE,          -- RN-01 ... RN-03
     descripcion         VARCHAR(200) NOT NULL,
-    tipo_variable       VARCHAR(10)  NOT NULL CHECK (tipo_variable IN ('AREA','INTERES','ESTILO')),
-    valor_hecho         VARCHAR(20)  NOT NULL,
-    operador            VARCHAR(2)   NOT NULL CHECK (operador IN ('=','>=')),
-    cantidad            SMALLINT     NOT NULL CHECK (cantidad > 0),
-    activa              BOOLEAN      NOT NULL DEFAULT TRUE
+    metrica             VARCHAR(25)  NOT NULL CHECK (metrica IN ('CONTEO_HECHOS','COINCIDENCIA_PRIMERA')),
+    tipo_variable       VARCHAR(10)  CHECK (tipo_variable IN ('AREA','INTERES','ESTILO')),
+    valor_hecho         VARCHAR(20),
+    operador            VARCHAR(2)   NOT NULL CHECK (operador IN ('=','>=','<')),
+    umbral              NUMERIC(6,2) NOT NULL CHECK (umbral >= 0),
+    activa              BOOLEAN      NOT NULL DEFAULT TRUE,
+    CHECK ((metrica = 'CONTEO_HECHOS') = (tipo_variable IS NOT NULL AND valor_hecho IS NOT NULL))
 );
 
 -- ---------------------------------------------------------------------
@@ -104,16 +118,23 @@ CREATE TABLE transaccional.evaluaciones_vocacionales (
     resultado_no_concluyente BOOLEAN NOT NULL DEFAULT FALSE
 );
 
--- Respuesta del aspirante y hecho derivado (RF-02)
+-- Respuesta del aspirante a cada pregunta (RF-02)
 CREATE TABLE transaccional.respuestas_aspirante (
     id_respuesta        SERIAL PRIMARY KEY,
     id_evaluacion       INT          NOT NULL REFERENCES transaccional.evaluaciones_vocacionales(id_evaluacion),
     id_pregunta         INT          NOT NULL REFERENCES conocimiento.preguntas_cuestionario_vocacional(id_pregunta),
-    valor_numerico      NUMERIC(6,2),
-    valor_opcion        VARCHAR(20),
+    valor               NUMERIC(6,2) NOT NULL,
+    UNIQUE (id_evaluacion, id_pregunta)
+);
+
+-- Hechos derivados de las respuestas: uno por variable del perfil (RF-02)
+CREATE TABLE transaccional.hechos_aspirante (
+    id_evaluacion       INT          NOT NULL REFERENCES transaccional.evaluaciones_vocacionales(id_evaluacion),
     id_hecho            INT          NOT NULL REFERENCES conocimiento.hechos_perfil(id_hecho),
-    UNIQUE (id_evaluacion, id_pregunta),
-    CHECK ((valor_numerico IS NULL) <> (valor_opcion IS NULL))
+    valor_calculado     NUMERIC(6,2) NOT NULL,                 -- promedio de las preguntas de la variable
+    posicion            SMALLINT     NOT NULL CHECK (posicion > 0),  -- lugar frente a las variables del mismo tipo
+    grado               NUMERIC(5,4) NOT NULL CHECK (grado > 0 AND grado <= 1),  -- factor de certeza del hecho
+    PRIMARY KEY (id_evaluacion, id_hecho)
 );
 
 -- Tabla de contabilización de coincidencias (RF-03)
@@ -121,8 +142,9 @@ CREATE TABLE transaccional.contabilizacion_coincidencias_hipotesis (
     id_evaluacion       INT          NOT NULL REFERENCES transaccional.evaluaciones_vocacionales(id_evaluacion),
     id_hipotesis        INT          NOT NULL REFERENCES conocimiento.hipotesis_programas(id_hipotesis),
     numero_coincidencias SMALLINT    NOT NULL CHECK (numero_coincidencias > 0),
-    suma_pesos          NUMERIC(6,2) NOT NULL CHECK (suma_pesos >= 0),
-    probabilidad        NUMERIC(7,4) NOT NULL CHECK (probabilidad BETWEEN 0 AND 100),
+    suma_aportes        NUMERIC(7,4) NOT NULL CHECK (suma_aportes >= 0),      -- suma de peso x grado
+    grado_coincidencia  NUMERIC(5,4) NOT NULL CHECK (grado_coincidencia BETWEEN 0 AND 1),  -- suma / máximo alcanzable
+    probabilidad        NUMERIC(7,4) NOT NULL CHECK (probabilidad BETWEEN 0 AND 100),     -- frente a todas las hipótesis
     PRIMARY KEY (id_evaluacion, id_hipotesis)
 );
 
@@ -131,7 +153,7 @@ CREATE TABLE transaccional.resultado_cinco_hipotesis (
     id_evaluacion       INT          NOT NULL REFERENCES transaccional.evaluaciones_vocacionales(id_evaluacion),
     posicion            SMALLINT     NOT NULL CHECK (posicion BETWEEN 1 AND 5),
     id_hipotesis        INT          NOT NULL REFERENCES conocimiento.hipotesis_programas(id_hipotesis),
-    probabilidad        NUMERIC(7,4) NOT NULL,
+    probabilidad        NUMERIC(7,4) NOT NULL CHECK (probabilidad BETWEEN 0 AND 100),  -- entre las cinco presentadas
     PRIMARY KEY (id_evaluacion, posicion),
     UNIQUE (id_evaluacion, id_hipotesis)
 );
@@ -155,6 +177,8 @@ CREATE TRIGGER trg_evaluaciones_inmutables BEFORE UPDATE OR DELETE ON transaccio
     FOR EACH ROW EXECUTE FUNCTION transaccional.impedir_cambios();
 CREATE TRIGGER trg_respuestas_inmutables BEFORE UPDATE OR DELETE ON transaccional.respuestas_aspirante
     FOR EACH ROW EXECUTE FUNCTION transaccional.impedir_cambios();
+CREATE TRIGGER trg_hechos_aspirante_inmutables BEFORE UPDATE OR DELETE ON transaccional.hechos_aspirante
+    FOR EACH ROW EXECUTE FUNCTION transaccional.impedir_cambios();
 CREATE TRIGGER trg_contabilizacion_inmutable BEFORE UPDATE OR DELETE ON transaccional.contabilizacion_coincidencias_hipotesis
     FOR EACH ROW EXECUTE FUNCTION transaccional.impedir_cambios();
 CREATE TRIGGER trg_resultado_inmutable BEFORE UPDATE OR DELETE ON transaccional.resultado_cinco_hipotesis
@@ -163,4 +187,5 @@ CREATE TRIGGER trg_marcas_inmutables BEFORE UPDATE OR DELETE ON transaccional.ma
     FOR EACH ROW EXECUTE FUNCTION transaccional.impedir_cambios();
 
 -- Índice para la consulta granular por hecho (RNF-03)
+CREATE INDEX idx_preguntas_variable ON conocimiento.preguntas_cuestionario_vocacional (id_variable);
 CREATE INDEX idx_granulos_hecho_hipotesis ON conocimiento.granulos_hecho_hipotesis (id_hecho) WHERE activo;

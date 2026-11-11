@@ -20,7 +20,7 @@
   <div class="tabla-marco">
     <table class="tabla">
       <thead><tr><th scope="col">N.º</th><th scope="col">Fecha</th><th scope="col">Aspirante</th><th scope="col">Documento</th>
-        <th scope="col">Programa con mayor afinidad</th><th scope="col" class="derecha">Afinidad</th><th scope="col">Estado</th>
+        <th scope="col">Programa con mayor probabilidad</th><th scope="col" class="derecha">Probabilidad</th><th scope="col" class="derecha">Coincidencia</th><th scope="col">Estado</th>
         <th scope="col"><span class="oculto">Acciones</span></th></tr></thead>
       <tbody>
         {% for e in evaluaciones %}
@@ -28,6 +28,7 @@
           <td>{{ e.id_evaluacion }}</td><td>{{ e.fecha_evaluacion|fecha }}</td><td>{{ e.aspirante }}</td>
           <td class="cifra">{{ e.documento }}</td><td>{{ e.programa_primera }}</td>
           <td class="derecha cifra">{{ e.probabilidad_primera|pct }}</td>
+            <td class="derecha cifra">{{ e.coincidencia_primera|pct1 }}</td>
           <td>{{ m.estado_evaluacion(e.resultado_no_concluyente) }}</td>
           <td class="derecha"><a href="{{ url_for('ingeniero.evaluacion', id_evaluacion=e.id_evaluacion) }}">Ver detalle<span class="oculto"> de la evaluación {{ e.id_evaluacion }}</span></a></td>
         </tr>

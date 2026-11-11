@@ -268,7 +268,7 @@
 <text x="626.4" y="346" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">FabricaConexion (pool)</text>
 <text x="612.0" y="364" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631"></text>
 <text x="612.0" y="382" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" font-style="normal" text-anchor="start" fill="#1B2631">No conoce Flask ni HTML</text>
-<path d="M945,170 v190 a115,20 0 0,0 230,0 v-190" fill="#DCE8F5" stroke="#1F4E79" stroke-width="1.5"/>
+<path d="M945,170 v215 a115,20 0 0,0 230,0 v-215" fill="#DCE8F5" stroke="#1F4E79" stroke-width="1.5"/>
 <ellipse cx="1060" cy="170" rx="115" ry="20" fill="#C9DBEF" stroke="#1F4E79" stroke-width="1.5"/>
 <text x="1060.0" y="215" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#1F4E79">PostgreSQL 16/17</text>
 <text x="1060.0" y="232" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631">local, Docker o Neon</text>
@@ -279,7 +279,8 @@
 <text x="1060.0" y="317" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631"></text>
 <text x="1060.0" y="334" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#1F4E79">esquema transaccional</text>
 <text x="1060.0" y="351" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631">aspirantes, evaluaciones,</text>
-<text x="1060.0" y="368" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631">contabilización, resultado</text>
+<text x="1060.0" y="368" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631">hechos, contabilización,</text>
+<text x="1060.0" y="385" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" font-style="normal" text-anchor="middle" fill="#1B2631">resultado</text>
 <polyline points="190,200 250,200" fill="none" stroke="#1B2631" stroke-width="1.5"/>
 <polygon points="250.0,200.0 239.0,205.0 239.0,195.0" fill="#1B2631"/>
 <circle cx="220" cy="185" r="11" fill="#1B2631"/>
